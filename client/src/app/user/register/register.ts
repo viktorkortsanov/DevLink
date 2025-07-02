@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule,RouterLink],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
@@ -16,6 +16,7 @@ export class RegisterComponent {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
+      role: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
     });
@@ -30,13 +31,10 @@ export class RegisterComponent {
     }
 
     const formValue = this.registerForm.value;
-    
+
     if (formValue.password !== formValue.confirmPassword) {
       this.errorMessage.set('Passwords do not match');
       return;
     }
-
-    console.log('Register attempt with POST method:', formValue.email);
-    // Тук ще добавиш HTTP POST заявката за регистрация
   }
 }
