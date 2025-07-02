@@ -1,0 +1,63 @@
+<div class="auth-container">
+    <div class="auth-header">
+        <div class="auth-logo">DevLink</div>
+        <p class="auth-subtitle">{{currentSubtitle()}}</p>
+    </div>
+
+    <div class="auth-tabs">
+        <div class="auth-tab" [class.active]="activeTab() === 'login'" (click)="switchTab('login')">Sign In</div>
+        <div class="auth-tab" [class.active]="activeTab() === 'register'" (click)="switchTab('register')">Sign Up</div>
+    </div>
+
+    @if (activeTab() === 'login') {
+        <form class="auth-form active" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            <div class="form-group">
+                <label class="form-label" for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" class="form-input" placeholder="Enter your email" formControlName="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" formControlName="password" required>
+            </div>
+            
+            <button type="submit" class="auth-button" [disabled]="loginForm.invalid">Sign In</button>
+        </form>
+    }
+
+    @if (activeTab() === 'register') {
+        <form class="auth-form active" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+            <div class="form-group">
+                <label class="form-label" for="registerUsername">Username</label>
+                <input type="text" id="registerUsername" class="form-input" placeholder="Choose a username" formControlName="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" class="form-input" placeholder="Enter your email" formControlName="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="registerPassword">Password</label>
+                <input type="password" id="registerPassword" class="form-input" placeholder="Create a password" formControlName="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your password" formControlName="confirmPassword" required>
+            </div>
+            
+            <button type="submit" class="auth-button" [disabled]="registerForm.invalid">Sign Up</button>
+        </form>
+    }
+
+    <div class="auth-footer">
+        <p>
+            @if (activeTab() === 'login') {
+                Don't have an account? <a href="#" (click)="switchTab('register')">Sign up here</a>
+            } @else {
+                Already have an account? <a href="#" (click)="switchTab('login')">Sign in here</a>
+            }
+        </p>
+    </div>
+</div>

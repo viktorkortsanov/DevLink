@@ -1,0 +1,93 @@
+@import 'swiper/css';
+@import 'swiper/css/navigation'; 
+@import 'swiper/css/pagination';
+
+.feedback {
+    padding: 5rem 0;
+    background-color: #ffffff;
+}
+
+.feedback-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.feedback-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.feedback-title {
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.feedback-subtitle {
+    font-size: 1.2rem;
+    color: #4a5568;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.swiper {
+    width: 100%;
+    height: auto;
+    padding-bottom: 50px;
+}
+
+.swiper-slide {
+    background-color: #2d3748;
+    border-radius: 1rem;
+    padding: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    height: auto;
+}
+
+.feedback-avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.feedback-content {
+    flex: 1;
+}
+
+.feedback-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
+}
+
+.feedback-rating {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.star {
+    width: 1rem;
+    height: 1rem;
+    color: #fbbf24;
+}
+
+.feedback-text {
+    color: #cbd5e0;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+.swiper-pagination-bullet {
+    background-color: #0080ff;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: #0080ff;
+}

@@ -1,0 +1,119 @@
+.auth-container {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    width: 100%;
+    max-width: 450px;
+    margin: 2rem auto;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: #4a5568;
+    font-size: 1rem;
+}
+
+.auth-tabs {
+    display: flex;
+    background-color: #f0f2f5;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    margin-bottom: 2rem;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 0.75rem;
+    text-align: center;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.auth-tab.active {
+    background-color: #ffffff;
+    color: #0080ff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background-color: #ffffff;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #0080ff;
+}
+
+.form-input::placeholder {
+    color: #a0aec0;
+}
+
+.auth-button {
+    width: 100%;
+    padding: 0.875rem;
+    background-color: #0080ff;
+    color: #ffffff;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+}
+
+.auth-button:hover {
+    background-color: #0066cc;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #4a5568;
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 2rem 1.5rem;
+    }
+}

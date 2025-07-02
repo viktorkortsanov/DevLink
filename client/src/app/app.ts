@@ -4,10 +4,10 @@ import { Header } from './header/header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,Header],
+  imports: [RouterOutlet, Header],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected title = 'client';
+  protected title = 'DevLink';
 }
