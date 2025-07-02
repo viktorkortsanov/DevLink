@@ -1,4 +1,4 @@
-.auth-container {
+.login-container {
     background-color: #ffffff;
     border-radius: 1rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -8,54 +8,31 @@
     margin: 2rem auto;
 }
 
-.auth-header {
+.login-header {
     text-align: center;
     margin-bottom: 2rem;
 }
 
-.auth-logo {
+.login-logo {
     font-size: 2rem;
     font-weight: 600;
     color: #2d3748;
     margin-bottom: 0.5rem;
 }
 
-.auth-subtitle {
+.login-subtitle {
     color: #4a5568;
     font-size: 1rem;
 }
 
-.auth-tabs {
-    display: flex;
-    background-color: #f0f2f5;
+.error-message {
+    background-color: #fee2e2;
+    color: #dc2626;
+    padding: 0.75rem 1rem;
     border-radius: 0.5rem;
-    padding: 0.25rem;
-    margin-bottom: 2rem;
-}
-
-.auth-tab {
-    flex: 1;
-    padding: 0.75rem;
-    text-align: center;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    color: #4a5568;
-}
-
-.auth-tab.active {
-    background-color: #ffffff;
-    color: #0080ff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.auth-form {
-    display: none;
-}
-
-.auth-form.active {
-    display: block;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    border: 1px solid #fecaca;
 }
 
 .form-group {
@@ -88,7 +65,7 @@
     color: #a0aec0;
 }
 
-.auth-button {
+.login-button {
     width: 100%;
     padding: 0.875rem;
     background-color: #0080ff;
@@ -102,18 +79,28 @@
     margin-top: 1rem;
 }
 
-.auth-button:hover {
+.login-button:hover {
     background-color: #0066cc;
 }
 
-.auth-footer {
+.login-footer {
     text-align: center;
     margin-top: 2rem;
     color: #4a5568;
 }
 
+.login-footer a {
+    color: #0080ff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-footer a:hover {
+    color: #0066cc;
+}
+
 @media (max-width: 480px) {
-    .auth-container {
+    .login-container {
         padding: 2rem 1.5rem;
     }
 }
