@@ -18,7 +18,7 @@ export class RegisterComponent {
       email: ['', [Validators.required, Validators.email]],
       role: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]]
+      rePassword: ['', [Validators.required]]
     });
   }
 
@@ -32,7 +32,7 @@ export class RegisterComponent {
 
     const formValue = this.registerForm.value;
 
-    if (formValue.password !== formValue.confirmPassword) {
+    if (formValue.password !== formValue.rePassword) {
       this.errorMessage.set('Passwords do not match');
       return;
     }

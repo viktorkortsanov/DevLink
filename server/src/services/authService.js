@@ -4,7 +4,7 @@ import { JWT_SECRET } from '../constants.js';
 import bcrypt from 'bcrypt';
 
 const authService = {
-    async register(username, email, password, rePassword) {
+    async register(username, email, role, password, rePassword) {
         const user = await User.findOne({ $or: [{ email }, { username }] });
 
         if (password !== rePassword) {
@@ -21,13 +21,14 @@ const authService = {
             username,
             email,
             password,
+            role,
             isAdmin,
         });
 
         const token = await this.generateToken(newUser);
         return {
             token,
-            user: { _id: newUser._id, email: newUser.email, username: newUser.username, isAdmin: newUser.isAdmin },
+            user: { _id: newUser._id, email: newUser.email, username: newUser.username, role: user.role, isAdmin: newUser.isAdmin },
         };
     },
 
@@ -48,7 +49,7 @@ const authService = {
 
         return {
             token,
-            user: { _id: user._id, email: user.email, username: user.username, isAdmin: user.isAdmin },
+            user: { _id: user._id, email: user.email, username: user.username, role: user.role, isAdmin: user.isAdmin },
         };
     },
 
@@ -57,6 +58,7 @@ const authService = {
             _id: user._id,
             email: user.email,
             username: user.username,
+            role: user.role,
             isAdmin: user.isAdmin,
         };
 
