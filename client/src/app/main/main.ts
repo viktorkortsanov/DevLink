@@ -6,7 +6,7 @@ import { Footer } from '../footer/footer';
 
 @Component({
   selector: 'app-main',
-  imports: [HeroSection, FeaturesSection, FeedbackSection, Footer],
+  imports: [HeroSection, FeaturesSection, FeedbackSection],
   templateUrl: './main.html',
   styleUrl: './main.css'
 })

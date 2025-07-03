@@ -16,13 +16,14 @@ authController.post('/register', async (req, res) => {
     }
 });
 
+
 authController.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
         const { token, user } = await authService.login(email, password);
         res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
-        res.status(200).json({ token, user: { _id: user._id, email: user.email, username: user.username, isAdmin: user.isAdmin } });
+        res.status(200).json({ user: { _id: user._id, email: user.email, username: user.username, role: user.role ,isAdmin: user.isAdmin } });
     } catch (err) {
         res.status(400).json({ err: err.message });
     }

@@ -16,19 +16,19 @@ const userSchema = new Schema({
         minLength: [10, 'Email must be at least 10 characters long']
     },
 
+    role: {
+        type: String,
+        required: true,
+    },
+
     password: {
         type: String,
         required: true,
         minLength: [4, 'Password must be at least 4 characters long']
     },
-    
+
     isAdmin: {
         type: Boolean,
-        required: true,
-    },
-
-    role: {
-        type: String,
         required: true,
     },
 
@@ -48,7 +48,7 @@ const userSchema = new Schema({
     }
 });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
     if (this.isModified('password') && !this.password.startsWith('$2a$')) {
         try {
             const hash = await bcrypt.hash(this.password, SALT_ROUNDS);

@@ -36,6 +36,14 @@
     color: #0080ff;
 }
 
+/* Auth Section */
+.auth-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Sign Up Button */
 .sign-up-btn {
     background-color: #0080ff;
     color: #ffffff;
@@ -50,4 +58,117 @@
 
 .sign-up-btn:hover {
     background-color: #0066cc;
+}
+
+/* User Profile */
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.user-profile:hover {
+    background-color: #f0f2f5;
+}
+
+.user-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: #0080ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+}
+
+.avatar-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.user-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.user-role {
+    font-size: 0.75rem;
+    color: #4a5568;
+    text-transform: capitalize;
+}
+
+.dropdown-arrow {
+    width: 1rem;
+    height: 1rem;
+    color: #4a5568;
+    transition: transform 0.3s ease;
+}
+
+.user-profile.active .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 200px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.dropdown-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #4a5568;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f2f5;
+    color: #2d3748;
+}
+
+.dropdown-item.logout:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.dropdown-icon {
+    width: 1.25rem;
+    height: 1.25rem;
 }

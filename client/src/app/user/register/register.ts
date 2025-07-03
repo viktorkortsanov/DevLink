@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ export class RegisterComponent {
   errorMessage = signal<string>('');
   registerForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -36,5 +37,13 @@ export class RegisterComponent {
       this.errorMessage.set('Passwords do not match');
       return;
     }
+
+    this.authService.register(this.registerForm.value).subscribe({
+      next: (res) => {
+        this.router.navigate(['/'])
+      },
+      error: (err) => this.errorMessage.set(err.error.err)
+    });
+
   }
 }

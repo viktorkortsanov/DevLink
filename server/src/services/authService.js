@@ -20,15 +20,15 @@ const authService = {
         const newUser = await User.create({
             username,
             email,
-            password,
             role,
+            password,
             isAdmin,
         });
 
         const token = await this.generateToken(newUser);
         return {
             token,
-            user: { _id: newUser._id, email: newUser.email, username: newUser.username, role: user.role, isAdmin: newUser.isAdmin },
+            user: { _id: newUser._id, email: newUser.email, username: newUser.username, role: newUser.role, isAdmin: newUser.isAdmin },
         };
     },
 
@@ -56,8 +56,8 @@ const authService = {
     async generateToken(user) {
         const payload = {
             _id: user._id,
-            email: user.email,
             username: user.username,
+            email: user.email,
             role: user.role,
             isAdmin: user.isAdmin,
         };
