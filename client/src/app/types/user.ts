@@ -16,7 +16,12 @@ export interface User {
   username: string;
   email: string;
   role: string;
-  isAdmin: boolean;
+  isAdmin?: boolean;
+  profileImage?: string;
+  bio?: string;
+  location?: string;
+  githubLink?: string;
+  linkedinLink?: string;
 }
 
 export interface AuthResponse {

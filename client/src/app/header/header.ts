@@ -8,13 +8,13 @@ import { AuthService } from '../user/auth.service';
   templateUrl: './header.html',
   styleUrls: ['./header.css']
 })
-export class Header {
+export class Header{
   isDropdownOpen = signal<boolean>(false);
 
   constructor(private authService: AuthService) {}
   isAuthenticated = computed(() => this.authService.isAuthenticated());
   userInfo = computed(() => this.authService.getUser());
-
+  
   toggleDropdown(): void {
     this.isDropdownOpen.set(!this.isDropdownOpen());
   }

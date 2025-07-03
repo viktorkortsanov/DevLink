@@ -42,8 +42,13 @@ const userSchema = new Schema({
         default: null
     },
 
-    profileLinks: {
-        type: Array,
+    githubLink: {
+        type: String,
+        default: null,
+    },
+
+    linkedinLink: {
+        type: String,
         default: null,
     }
 });

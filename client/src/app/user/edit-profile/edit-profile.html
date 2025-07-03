@@ -1,0 +1,122 @@
+<div class="edit-profile-container">
+    <div class="edit-profile-header">
+        <h1 class="edit-profile-title">Edit Profile</h1>
+        <p class="edit-profile-subtitle">Update your personal information and preferences</p>
+    </div>
+
+    <form class="edit-profile-form" [formGroup]="editProfileForm" (ngSubmit)="onSaveProfile()">
+        @if (errorMessage()) {
+            <div class="error-message">{{ errorMessage() }}</div>
+        }
+
+        <!-- Basic Information -->
+        <div class="section-title">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            Basic Information
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="username">Username</label>
+                <input type="text" id="username" class="form-input" placeholder="Enter your username" formControlName="username" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" id="email" class="form-input" placeholder="Enter your email" formControlName="email" required>
+            </div>
+        </div>
+
+        <!-- Profile Image -->
+        <div class="form-group">
+            <label class="form-label" for="profileImage">Profile Image URL</label>
+            <input type="url" id="profileImage" class="form-input" placeholder="https://example.com/image.jpg" formControlName="profileImage" (input)="onImageUrlChange()">
+            <div class="profile-image-preview">
+                <div class="image-preview">
+                    @if (imagePreviewUrl()) {
+                        <img [src]="imagePreviewUrl()" [alt]="editProfileForm.get('username')?.value + ' avatar'" (error)="onImageError()">
+                    } @else {
+                        {{ getInitials() }}
+                    }
+                </div>
+                <div class="image-info">
+                    <div class="image-filename">{{ getImageFilename() }}</div>
+                    <div class="image-hint">Enter a URL to change your profile image</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bio and Location -->
+        <div class="form-group">
+            <label class="form-label" for="bio">Bio</label>
+            <textarea id="bio" class="form-textarea" placeholder="Tell us about yourself..." rows="4" formControlName="bio"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="location">Location</label>
+            <input type="text" id="location" class="form-input" placeholder="City, Country" formControlName="location">
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Security -->
+        <div class="section-title">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            </svg>
+            Security
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="password">New Password</label>
+                <input type="password" id="password" class="form-input" placeholder="Enter new password (optional)" formControlName="password">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm new password" formControlName="confirmPassword">
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Social Links -->
+        <div class="section-title">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm1-8.25c-.41 0-.75-.34-.75-.75s.34-.75.75-.75.75.34.75.75-.34.75-.75.75zM17 17h-2v-3.5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5V17h-2v-7h2v1.28c.46-.6 1.22-.78 2-.78 1.38 0 3 .96 3 2.5V17z"/>
+            </svg>
+            Social Links
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="githubLink">GitHub Profile</label>
+                <input type="url" id="githubLink" class="form-input" placeholder="https://github.com/username" formControlName="githubLink">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="linkedinLink">LinkedIn Profile</label>
+                <input type="url" id="linkedinLink" class="form-input" placeholder="https://linkedin.com/in/username" formControlName="linkedinLink">
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="onCancel()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+                Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="editProfileForm.invalid || isLoading()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                {{ isLoading() ? 'Saving...' : 'Save Changes' }}
+            </button>
+        </div>
+    </form>
+</div>
