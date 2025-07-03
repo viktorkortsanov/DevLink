@@ -1,7 +1,7 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { UserService } from '../user.service';
 import { User } from '../../types/user';
 
@@ -32,7 +32,7 @@ export class EditProfileComponent implements OnInit {
       bio: [''],
       location: [''],
       password: [''],
-      confirmPassword: [''],
+      rePassword: [''],
       githubLink: [''],
       linkedinLink: ['']
     });
@@ -45,7 +45,6 @@ export class EditProfileComponent implements OnInit {
   loadCurrentUserData(): void {
     const userId = this.route.snapshot.paramMap.get('userId');
     this.userService.getUserInfo(userId).subscribe((userInfo: User) => {
-      console.log(userInfo);
       this.userInfo = userInfo;
 
       this.editProfileForm.patchValue({
@@ -102,7 +101,7 @@ export class EditProfileComponent implements OnInit {
 
     const formValue = this.editProfileForm.value;
 
-    if (formValue.password && formValue.password !== formValue.confirmPassword) {
+    if (formValue.password && formValue.password !== formValue.rePassword) {
       this.errorMessage.set('Passwords do not match');
       return;
     }
@@ -118,13 +117,25 @@ export class EditProfileComponent implements OnInit {
       githubLink: formValue.githubLink,
       linkedinLink: formValue.linkedinLink
     };
-
-    console.log('Profile data to save:', profileData);
-
-    setTimeout(() => {
-      this.isLoading.set(false);
-      this.router.navigate(['/profile']);
-    }, 1000);
+    const userId = this.route.snapshot.paramMap.get('userId');
+    this.userService.updateUserInfo(userId, profileData).subscribe({
+      next: (updatedUser) => {
+        this.isLoading.set(false);
+        localStorage.setItem('user', JSON.stringify({ 
+          _id: updatedUser._id, 
+          username: updatedUser.username, 
+          email: updatedUser.email, 
+          profileImage: updatedUser?.profileImage || null,
+          role: updatedUser.role, 
+          isAdmin: updatedUser.isAdmin 
+        }));
+        this.router.navigate([`/profile/${userId}`]);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(err.error?.message || 'Update failed');
+      }
+    });
   }
 
   onCancel(): void {

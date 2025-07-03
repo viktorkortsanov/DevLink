@@ -42,6 +42,11 @@ const userSchema = new Schema({
         default: null
     },
 
+    location: {
+        type: String,
+        default: null,
+    },
+
     githubLink: {
         type: String,
         default: null,

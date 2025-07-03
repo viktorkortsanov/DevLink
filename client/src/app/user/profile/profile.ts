@@ -1,17 +1,21 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CapitalizePipe } from '../../shared/pipes/capitalize-pipe';
+import { UserService } from '../user.service';
+import { User } from '../../types/user';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, CapitalizePipe],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   activeTab = signal<'first' | 'second'>('first');
 
+  user: User | null = null;
   appliedProjects = signal<any[]>([]);
   savedProjects = signal<any[]>([]);
   postedProjects = signal<any[]>([]);
@@ -22,12 +26,19 @@ export class ProfileComponent {
   githubUrl = signal<string>('');
   linkedinUrl = signal<string>('');
 
-  constructor(private authService: AuthService) { }
-
+  constructor(private authService: AuthService, private userService: UserService, private route: ActivatedRoute) { }
   currentUser = computed(() => this.authService.getUser());
   isDeveloper = computed(() => this.currentUser()?.role === 'developer');
   isEmployer = computed(() => this.currentUser()?.role === 'employer');
   emailUrl = computed(() => `mailto:${this.currentUser()?.email || ''}`);
+
+  ngOnInit(): void {
+    const userId = this.route.snapshot.paramMap.get('userId');
+    this.userService.getUserInfo(userId).subscribe((userInfo) => {
+      console.log(userInfo);
+      this.user = userInfo;
+    });
+  }
 
   getRoleDisplay(): string {
     const role = this.currentUser()?.role;

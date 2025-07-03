@@ -11,11 +11,21 @@ export interface LoginData {
     password: string,
 }
 
-export interface User {
-  _id: string;
+export interface EdidUserData {
   username: string;
   email: string;
-  role: string;
+  profileImage?: string;
+  bio?: string;
+  location?: string;
+  githubLink?: string;
+  linkedinLink?: string;
+}
+
+export interface User {
+  _id?: string;
+  username: string;
+  email: string;
+  role?: string;
   isAdmin?: boolean;
   profileImage?: string;
   bio?: string;

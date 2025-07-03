@@ -4,7 +4,7 @@
         <p class="edit-profile-subtitle">Update your personal information and preferences</p>
     </div>
 
-    <form class="edit-profile-form" [formGroup]="editProfileForm" (ngSubmit)="onSaveProfile()">
+    <form class="edit-profile-form" [formGroup]="editProfileForm" (ngSubmit)="onSaveProfile()" method="POST">
         @if (errorMessage()) {
             <div class="error-message">{{ errorMessage() }}</div>
         }
@@ -76,8 +76,8 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm new password" formControlName="confirmPassword">
+                <label class="form-label" for="rePassword">Confirm Password</label>
+                <input type="password" id="rePassword" class="form-input" placeholder="Confirm new password" formControlName="rePassword">
             </div>
         </div>
 

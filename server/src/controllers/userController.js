@@ -9,15 +9,23 @@ userController.get('/users', async (req, res) => {
     res.json(users);
 });
 
-userController.get('/edit-profile/:userId', async(req,res) => {
+userController.get('/edit-profile/:userId', async (req, res) => {
     const userId = req.params.userId;
     const user = await userService.getOne(userId).lean();
     res.json(user);
 })
 
-userController.get('/users/:userId', async(req,res) => {
+userController.post('/edit-profile/:userId', async (req, res) => {
     const userId = req.params.userId;
-    const userInfo = await userService.getOne(userId).lean();
+    const updatedData = req.body;
+    const updatedUser = await userService.updateUser(userId, updatedData);
+    res.json(updatedUser);
+});
+
+userController.get('/users/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const userInfo = await userService.getOne(userId);
+    console.log(userInfo);
     res.json(userInfo);
 });
 
@@ -48,7 +56,7 @@ userController.get('/users/:userId/profileImage', async (req, res) => {
 
     try {
         const user = await userService.getOne(userId);
-        
+
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
