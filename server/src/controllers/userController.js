@@ -28,6 +28,17 @@ userController.get('/users/:userId', async (req, res) => {
     res.json(userInfo);
 });
 
+userController.post('/profile/:userId/star', async (req,res) => {
+    try {
+    const targetUserId = req.params.userId;
+    const likerUserId = req.user._id;
+    await userService.starUser(targetUserId, likerUserId);
+    res.status(200)
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 userController.put('/users/:userId/updateProfileImage', async (req, res) => {
     const { userId } = req.params;
     const { profileImageUrl } = req.body;

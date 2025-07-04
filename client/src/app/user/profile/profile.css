@@ -272,6 +272,15 @@
     color: #a0aec0;
 }
 
+.social-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.profile-header {
+    position: relative;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .profile-container {

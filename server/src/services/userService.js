@@ -14,6 +14,15 @@ const userService = {
             { new: true }
         );
     },
+    async starUser(targetUserId, likerUserId) {
+        const user = await User.findById(targetUserId);
+
+        if (!user.stars.includes(likerUserId)) {
+            return User.findByIdAndUpdate(targetUserId, { $push: { stars: likerUserId } });
+        } else {
+            return User.findByIdAndUpdate(targetUserId, { $pull: { stars: likerUserId } });
+        }
+    },
     updateProfileImage: async (userId, profileImage) => {
         const user = await User.findById(userId);
         if (!user) throw new Error('User not found');

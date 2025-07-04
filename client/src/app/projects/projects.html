@@ -1,0 +1,114 @@
+<div class="projects-container">
+    <div class="projects-header">
+        <h1 class="projects-title">Projects</h1>
+        @if(isEmployer()){
+        <a routerLink="/create-project" class="create-project-btn">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+            Create Project
+        </a>
+        }
+    </div>
+
+    <!-- Search and Filters Section -->
+    <div class="search-filters">
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <!-- TODO: Add [value] binding and (input) event -->
+            <input type="text" class="search-input" placeholder="Search projects...">
+            <!-- TODO: Add (click) event for search -->
+            <button class="search-btn">Search</button>
+        </div>
+
+        <!-- Filters Row -->
+        <div class="filters">
+            <!-- Project Type Filter -->
+            <div class="filter-group">
+                <label class="filter-label">Project Type</label>
+                <!-- TODO: Add (change) event handler -->
+                <select class="filter-select">
+                    <option value="">All Types</option>
+                    <option value="front-end">Front-End</option>
+                    <option value="back-end">Back-End</option>
+                    <option value="full-stack">Full-Stack</option>
+                    <option value="mobile">Mobile</option>
+                    <option value="ui-ux">UI/UX Designer</option>
+                    <option value="devops">DevOps</option>
+                </select>
+            </div>
+
+            <!-- Experience Level Filter -->
+            <div class="filter-group">
+                <label class="filter-label">Experience Level</label>
+                <!-- TODO: Add (change) event handler -->
+                <select class="filter-select">
+                    <option value="">All Levels</option>
+                    <option value="junior">Junior / Intern</option>
+                    <option value="mid">Mid</option>
+                    <option value="senior">Senior</option>
+                </select>
+            </div>
+
+            <!-- Work Type Filter -->
+            <div class="filter-group">
+                <label class="filter-label">Work Type</label>
+                <!-- TODO: Add (change) event handler -->
+                <select class="filter-select">
+                    <option value="">All Work Types</option>
+                    <option value="office">Office</option>
+                    <option value="hybrid">Hybrid</option>
+                    <option value="remote">Fully Remote</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <!-- TODO: Add @if condition for loading state -->
+    <div class="loading-state" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Loading projects...</p>
+    </div>
+
+    <!-- Projects List -->
+    <!-- TODO: Add @if condition for projects exist -->
+    <!-- TODO: Add @for loop for projects -->
+    <div class="projects-list">
+        <!-- PROJECT CARDS WILL BE RENDERED HERE -->
+        <!-- Example static card for reference: -->
+        <div class="project-card-placeholder">
+            <p>Project cards will be rendered here via &lt;app-project-card&gt;</p>
+        </div>
+    </div>
+
+    <!-- Pagination Section -->
+    <!-- TODO: Add conditions for pagination visibility -->
+    <div class="pagination">
+        <!-- Previous Button -->
+        <!-- TODO: Add [disabled] condition and (click) handler -->
+        <button class="pagination-btn">Previous</button>
+
+        <!-- Page Numbers -->
+        <!-- TODO: Add @for loop for visible pages -->
+        <!-- TODO: Add [class.active] condition -->
+        <button class="pagination-btn active">1</button>
+        <button class="pagination-btn">2</button>
+        <button class="pagination-btn">3</button>
+        <span class="pagination-info">...</span>
+
+        <!-- Next Button -->
+        <!-- TODO: Add [disabled] condition and (click) handler -->
+        <button class="pagination-btn">Next</button>
+    </div>
+
+    <!-- Empty State -->
+    <!-- TODO: Add @if condition for no projects -->
+    <div class="empty-state" style="display: none;">
+        <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+        </svg>
+        <h3>No projects found</h3>
+        <p>Try adjusting your search criteria or filters</p>
+    </div>
+</div>

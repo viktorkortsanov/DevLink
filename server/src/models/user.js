@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10;
@@ -31,6 +31,11 @@ const userSchema = new Schema({
         type: Boolean,
         required: true,
     },
+
+    stars: [{
+        type: Types.ObjectId,
+        ref: 'User'
+    }],
 
     profileImage: {
         type: String,

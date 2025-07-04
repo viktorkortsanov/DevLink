@@ -1,0 +1,201 @@
+<div class="create-project-container">
+    <div class="create-project-header">
+        <h1 class="create-project-title">Create New Project</h1>
+        <p class="create-project-subtitle">Post a new project opportunity for developers</p>
+    </div>
+
+    <form [formGroup]="projectForm" class="create-project-form" method="POST">
+        <!-- Error Message -->
+        @if (errorMessage()) {
+        <div class="error-message">
+            {{ errorMessage() }}
+        </div>
+        }
+
+        <!-- Basic Information -->
+        <div class="section-title">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Basic Information
+        </div>
+
+        <!-- Project Title -->
+        <div class="form-group">
+            <label class="form-label" for="title">Project Title</label>
+            <input type="text" id="title" formControlName="title" class="form-input"
+                [class.error]="isFieldInvalid('title')" placeholder="e.g. Frontend Developer Internship">
+            @if (isFieldInvalid('title')) {
+            <div class="field-error">
+                {{ getFieldError('title') }}
+            </div>
+            }
+        </div>
+
+        <!-- Project Logo -->
+        <div class="form-group">
+            <label class="form-label" for="projectLogo">Project Logo URL</label>
+            <input type="url" id="projectLogo" formControlName="projectLogo" class="form-input"
+                [class.error]="isFieldInvalid('projectLogo')" placeholder="https://example.com/logo.png"
+                (input)="onLogoUrlChange()">
+            @if (isFieldInvalid('projectLogo')) {
+            <div class="field-error">
+                {{ getFieldError('projectLogo') }}
+            </div>
+            }
+
+            <!-- Logo Preview -->
+            <div class="logo-preview">
+                <div class="logo-image">
+                    @if (logoPreviewUrl()) {
+                    <img [src]="logoPreviewUrl()" alt="Project logo preview" (error)="onLogoError()">
+                    } @else {
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    }
+                </div>
+                <div class="logo-info">
+                    <div class="logo-filename">
+                        {{ getLogoFilename() }}
+                    </div>
+                    <div class="logo-hint">Enter a URL to add project logo</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Short Description -->
+        <div class="form-group">
+            <label class="form-label" for="shortDescription">Short Description</label>
+            <textarea id="shortDescription" formControlName="shortDescription" class="form-textarea short"
+                [class.error]="isFieldInvalid('shortDescription')"
+                placeholder="Brief overview of the project (1-2 sentences)" rows="3"></textarea>
+            @if (isFieldInvalid('shortDescription')) {
+            <div class="field-error">
+                {{ getFieldError('shortDescription') }}
+            </div>
+            }
+        </div>
+
+        <!-- Full Description -->
+        <div class="form-group">
+            <label class="form-label" for="fullDescription">Full Description</label>
+            <textarea id="fullDescription" formControlName="fullDescription" class="form-textarea full"
+                [class.error]="isFieldInvalid('fullDescription')"
+                placeholder="Detailed description of the project, requirements, responsibilities, and what the developer will learn..."
+                rows="5"></textarea>
+            @if (isFieldInvalid('fullDescription')) {
+            <div class="field-error">
+                {{ getFieldError('fullDescription') }}
+            </div>
+            }
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Project Details -->
+        <div class="section-title">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Project Details
+        </div>
+
+        <div class="form-grid">
+            <!-- Project Type -->
+            <div class="form-group">
+                <label class="form-label" for="projectType">Project Type</label>
+                <select id="projectType" formControlName="projectType" class="form-select"
+                    [class.error]="isFieldInvalid('projectType')">
+                    <option value="">Select project type</option>
+                    @for (type of projectTypes; track type.value) {
+                    <option [value]="type.value">
+                        {{ type.label }}
+                    </option>
+                    }
+                </select>
+                @if (isFieldInvalid('projectType')) {
+                <div class="field-error">
+                    {{ getFieldError('projectType') }}
+                </div>
+                }
+            </div>
+
+            <!-- Experience Level -->
+            <div class="form-group">
+                <label class="form-label" for="experienceLevel">Experience Level</label>
+                <select id="experienceLevel" formControlName="experienceLevel" class="form-select"
+                    [class.error]="isFieldInvalid('experienceLevel')">
+                    <option value="">Select experience level</option>
+                    @for (level of experienceLevels; track level.value) {
+                    <option [value]="level.value">
+                        {{ level.label }}
+                    </option>
+                    }
+                </select>
+                @if (isFieldInvalid('experienceLevel')) {
+                <div class="field-error">
+                    {{ getFieldError('experienceLevel') }}
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Work Type -->
+        <div class="form-group">
+            <label class="form-label" for="workType">Work Type</label>
+            <select id="workType" formControlName="workType" class="form-select"
+                [class.error]="isFieldInvalid('workType')">
+                <option value="">Select work type</option>
+                @for (type of workTypes; track type.value) {
+                <option [value]="type.value">
+                    {{ type.label }}
+                </option>
+                }
+            </select>
+            @if (isFieldInvalid('workType')) {
+            <div class="field-error">
+                {{ getFieldError('workType') }}
+            </div>
+            }
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="form-group">
+            <label class="form-label" for="techStack">Tech Stack</label>
+            <input type="text" id="techStack" formControlName="techStack" class="form-input"
+                [class.error]="isFieldInvalid('techStack')" placeholder="JavaScript, React, HTML, CSS">
+            @if (isFieldInvalid('techStack')) {
+            <div class="field-error">
+                {{ getFieldError('techStack') }}
+            </div>
+            }
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isLoading()">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                </svg>
+                Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" (click)="onCreateProject()"
+                [disabled]="isLoading() || projectForm.invalid">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+                @if (!isLoading()) {
+                <span>Create Project</span>
+                } @else {
+                <span>Creating...</span>
+                }
+            </button>
+        </div>
+    </form>
+</div>

@@ -48,7 +48,7 @@ export class ProfileComponent implements OnInit {
     }
     return 'User';
   }
-
+  
   getFirstTabLabel(): string {
     return this.isDeveloper() ? 'Applied Projects' : 'Posted Projects';
   }
