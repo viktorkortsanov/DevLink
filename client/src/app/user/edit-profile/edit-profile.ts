@@ -141,10 +141,10 @@ export class EditProfileComponent implements OnInit {
   onCancel(): void {
     if (this.editProfileForm.dirty) {
       if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
-        this.router.navigate(['/profile']);
+        this.router.navigate([`/profile/${this.userInfo?._id}`]);
       }
     } else {
-      this.router.navigate(['/profile']);
+      this.router.navigate([`/profile/${this.userInfo?._id}`]);
     }
   }
 

@@ -25,7 +25,6 @@ userController.post('/edit-profile/:userId', async (req, res) => {
 userController.get('/users/:userId', async (req, res) => {
     const userId = req.params.userId;
     const userInfo = await userService.getOne(userId);
-    console.log(userInfo);
     res.json(userInfo);
 });
 
