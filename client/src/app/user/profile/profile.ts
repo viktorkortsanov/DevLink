@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
   linkedinUrl = signal<string>('');
 
   constructor(private authService: AuthService, private userService: UserService, private route: ActivatedRoute) { }
-  currentUser = computed(() => this.authService.getUser());
+  currentUser = computed(() => this.authService.currentUser());
   isDeveloper = computed(() => this.currentUser()?.role === 'developer');
   isEmployer = computed(() => this.currentUser()?.role === 'employer');
   emailUrl = computed(() => `mailto:${this.currentUser()?.email || ''}`);

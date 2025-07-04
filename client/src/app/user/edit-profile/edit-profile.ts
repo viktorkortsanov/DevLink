@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { UserService } from '../user.service';
 import { User } from '../../types/user';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -22,6 +23,7 @@ export class EditProfileComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
+    private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -118,11 +120,12 @@ export class EditProfileComponent implements OnInit {
       linkedinLink: formValue.linkedinLink
     };
     const userId = this.route.snapshot.paramMap.get('userId');
+    this.authService.updateUserProfile(profileData);
     this.userService.updateUserInfo(userId, profileData).subscribe({
       next: (updatedUser) => {
         this.isLoading.set(false);
         localStorage.setItem('user', JSON.stringify({ 
-          _id: updatedUser._id, 
+          _id: updatedUser._id,
           username: updatedUser.username, 
           email: updatedUser.email, 
           profileImage: updatedUser?.profileImage || null,

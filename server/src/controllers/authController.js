@@ -23,7 +23,7 @@ authController.post('/login', async (req, res) => {
     try {
         const { token, user } = await authService.login(email, password);
         res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
-        res.status(200).json({ user: { _id: user._id, email: user.email, username: user.username, role: user.role ,isAdmin: user.isAdmin } });
+        res.status(200).json({ user: { _id: user._id, email: user.email, username: user.username, role: user.role, isAdmin: user.isAdmin } });
     } catch (err) {
         res.status(400).json({ err: err.message });
     }

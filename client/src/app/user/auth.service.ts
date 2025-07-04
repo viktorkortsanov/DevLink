@@ -1,20 +1,33 @@
-import { Injectable, signal } from '@angular/core';
-import { AuthResponse, LoginData, RegsiterData } from '../types/user';
+import { computed, Injectable, signal } from '@angular/core';
+import { AuthResponse, LoginData, RegsiterData, User } from '../types/user';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private _isAuthenticated = signal<boolean>(false);
-  
-  constructor(private http: HttpClient) {
-    this._isAuthenticated.set(this.getUser() !== null);
+  private _currentUser = signal<User | null>(null);
+
+  currentUser = computed(() => this._currentUser());
+  isAuthenticated = computed(() => this._isAuthenticated());
+
+  constructor(private http: HttpClient, private userService: UserService) {
+    this.initializeFromStorage();
   }
 
-  getUser() {
+  private initializeFromStorage(): void {
+    const user = this.getStoredUser();
+    if (user) {
+      this._currentUser.set(user);
+      this._isAuthenticated.set(true);
+    }
+  }
+
+  private getStoredUser(): User | null {
     const user = localStorage.getItem('user');
     if (!user) {
       return null;
@@ -22,8 +35,13 @@ export class AuthService {
     return JSON.parse(user);
   }
 
-  isAuthenticated() {
-    return this._isAuthenticated();
+  updateUserProfile(updatedData: Partial<User>): void {
+    const currentUser = this._currentUser();
+    if (currentUser) {
+      const updatedUser = { ...currentUser, ...updatedData };
+      this._currentUser.set(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
   }
 
   register(userData: RegsiterData) {
@@ -31,8 +49,11 @@ export class AuthService {
       withCredentials: true
     }).pipe(
       tap((res) => {
-        const { _id, username, email, role, isAdmin } = res.user;
-        localStorage.setItem('user', JSON.stringify({ _id, username, email, role, isAdmin }));
+        const { _id, username, email, profileImage, role, isAdmin } = res.user;
+        const user: User = { _id, username, email, profileImage, role, isAdmin };
+
+        localStorage.setItem('user', JSON.stringify(user));
+        this._currentUser.set(user);
         this._isAuthenticated.set(true);
       })
     );
@@ -43,17 +64,32 @@ export class AuthService {
       withCredentials: true
     }).pipe(
       tap((res) => {
-        const { _id, username, email, role, isAdmin } = res.user;
-        localStorage.setItem('user', JSON.stringify({ _id, username, email, role, isAdmin }));
-        this._isAuthenticated.set(true);
+        const { _id } = res.user;
+
+        this.userService.getUserInfo(_id!).subscribe((userInfo) => {
+          const user: User = {
+            _id: userInfo._id,
+            username: userInfo.username,
+            email: userInfo.email,
+            profileImage: userInfo.profileImage,
+            role: userInfo.role,
+            isAdmin: userInfo.isAdmin
+          };
+
+          localStorage.setItem('user', JSON.stringify(user));
+          this._currentUser.set(user);
+          this._isAuthenticated.set(true);
+        });
       })
     );
   }
 
+
   logout(): void {
     localStorage.removeItem('user');
+    this._currentUser.set(null);
     this._isAuthenticated.set(false);
-    
+
     this.http.get(`${environment.apiUrl}/logout`, {
       withCredentials: true
     }).subscribe();

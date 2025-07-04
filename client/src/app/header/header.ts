@@ -1,5 +1,5 @@
 import { Component, signal, computed, HostListener } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../user/auth.service';
 
 @Component({
@@ -11,9 +11,9 @@ import { AuthService } from '../user/auth.service';
 export class Header{
   isDropdownOpen = signal<boolean>(false);
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
   isAuthenticated = computed(() => this.authService.isAuthenticated());
-  userInfo = computed(() => this.authService.getUser());
+  userInfo = computed(() => this.authService.currentUser());
   
   toggleDropdown(): void {
     this.isDropdownOpen.set(!this.isDropdownOpen());
@@ -27,6 +27,7 @@ export class Header{
     event.preventDefault();
     this.closeDropdown();
     this.authService.logout();
+    this.router.navigate(['/']);
   }
 
   @HostListener('document:click', ['$event'])
