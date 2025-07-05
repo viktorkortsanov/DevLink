@@ -17,6 +17,10 @@ const projectSchema = new Schema({
         type: String,
         required: true
     },
+    requirements: {
+        type: String,
+        required: true
+    },
     projectType: {
         type: String,
         required: true

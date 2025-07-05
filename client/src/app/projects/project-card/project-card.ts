@@ -1,24 +1,12 @@
 import { Component, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-export interface Project {
-  id: string;
-  title: string;
-  projectLogo?: string;
-  shortDescription: string;
-  fullDescription: string;
-  projectType: string;
-  experienceLevel: string;
-  workType: 'office' | 'hybrid' | 'remote';
-  techStack: string;
-  createdAt?: Date;
-  isSaved?: boolean;
-}
+import { RouterModule } from '@angular/router';
+import { Project } from '../../types/project';
 
 @Component({
   selector: 'app-project-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './project-card.html',
   styleUrls: ['./project-card.css']
 })
@@ -30,8 +18,8 @@ export class ProjectCardComponent {
   get techStackArray(): string[] {
     return this.project.techStack
       .split(',')
-      .map(tech => tech.trim())
-      .filter(tech => tech.length > 0);
+      .map((tech: string) => tech.trim())
+      .filter((tech: string) => tech.length > 0);
   }
 
   get workTypeConfig() {
@@ -53,6 +41,26 @@ export class ProjectCardComponent {
       }
     };
     return configs[this.project.workType] || configs.office;
+  }
+
+  generateTechIcon(tech: string): string {
+    const normalizedTech = tech.toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+      .replace(/js$/, 'javascript')
+      .replace(/ts$/, 'typescript')
+      .replace(/nodejs/, 'nodejs')
+      .replace(/reactjs/, 'react')
+      .replace(/vuejs/, 'vuejs')
+      .replace(/angularjs/, 'angularjs')
+      .replace(/html/, 'html5')
+      .replace(/css/, 'css3');
+
+    return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${normalizedTech}/${normalizedTech}-original.svg`;
+  }
+
+  onTechIconError(event: any): void {
+    // Hide the broken icon
+    event.target.style.display = 'none';
   }
 
   onLogoError(): void {

@@ -6,6 +6,10 @@ const projectService = {
         return Project.find();
     },
 
+    getOne(projectId) {
+        return Project.findById(projectId);
+    },
+
     create(projectData, userId) {
         return Project.create({ ...projectData, owner: userId });
     }

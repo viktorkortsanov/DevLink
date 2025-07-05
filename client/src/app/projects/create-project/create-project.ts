@@ -1,13 +1,12 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { ProjectService } from '../project.service';
 
 @Component({
   selector: 'app-create-project',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './create-project.html',
   styleUrls: ['./create-project.css']
 })
@@ -60,6 +59,11 @@ export class CreateProjectComponent implements OnInit {
         Validators.minLength(50),
         Validators.maxLength(2000)
       ]],
+      requirements: ['', [
+        Validators.required,
+        Validators.minLength(20),
+        Validators.maxLength(1000)
+      ]],
       projectType: ['', [Validators.required]],
       experienceLevel: ['', [Validators.required]],
       workType: ['', [Validators.required]],
@@ -72,7 +76,6 @@ export class CreateProjectComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Initialize if needed
   }
 
   onLogoUrlChange(): void {
@@ -111,6 +114,7 @@ export class CreateProjectComponent implements OnInit {
       title: 'Project title',
       shortDescription: 'Short description',
       fullDescription: 'Full description',
+      requirements: 'Requirements',
       projectType: 'Project type',
       experienceLevel: 'Experience level',
       workType: 'Work type',
@@ -150,6 +154,7 @@ export class CreateProjectComponent implements OnInit {
       projectLogo: this.projectForm.value.projectLogo,
       shortDescription: this.projectForm.value.shortDescription,
       fullDescription: this.projectForm.value.fullDescription,
+      requirements: this.projectForm.value.requirements,
       projectType: this.projectForm.value.projectType,
       experienceLevel: this.projectForm.value.experienceLevel,
       workType: this.projectForm.value.workType,

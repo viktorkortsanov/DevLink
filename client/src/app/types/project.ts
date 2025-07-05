@@ -4,9 +4,10 @@ export interface Project {
     projectLogo: string;
     shortDescription: string;
     fullDescription: string;
+    requirements: string;
     projectType: string;
     experienceLevel: string;
-    workType: string;
+    workType: 'office' | 'hybrid' | 'remote';
     techStack: string;
     createdAt?: string;
     favourites?: string[];
