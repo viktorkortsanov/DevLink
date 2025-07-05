@@ -4,6 +4,15 @@ import projectService from "../services/projectService.js";
 
 const projectController = Router();
 
+projectController.get('/projects', async (req, res) => {
+    try{
+        const projects = await projectService.getAll().lean();
+        res.status(200).json(projects);
+    }catch(err) {
+        res.status(400).json(err);
+    }
+});
+
 projectController.post('/create-project', async (req, res) => {
     const projectData = req.body;
     const userId = req.user._id;

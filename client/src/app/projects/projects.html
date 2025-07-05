@@ -71,16 +71,28 @@
         <p>Loading projects...</p>
     </div>
 
-    <!-- Projects List -->
-    <!-- TODO: Add @if condition for projects exist -->
-    <!-- TODO: Add @for loop for projects -->
     <div class="projects-list">
-        <!-- PROJECT CARDS WILL BE RENDERED HERE -->
-        <!-- Example static card for reference: -->
-        <div class="project-card-placeholder">
-            <p>Project cards will be rendered here via &lt;app-project-card&gt;</p>
+
+        @if (allProjects().length === 0) {
+        <div class="project-card empty-state">
+            <div class="empty-content">
+                <svg width="64" height="64" fill="currentColor" viewBox="0 0 24 24"
+                    style="color: #a0aec0; margin-bottom: 1rem;">
+                    <path
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 style="color: #4a5568; margin-bottom: 0.5rem;">No projects found</h3>
+                <p style="color: #718096;">There are currently no projects available.</p>
+            </div>
         </div>
+        } @else {
+        @for (project of allProjects(); track project._id) {
+        <app-project-card [project]="project" />
+        }
+        }
+
     </div>
+
 
     <!-- Pagination Section -->
     <!-- TODO: Add conditions for pagination visibility -->

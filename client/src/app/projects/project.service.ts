@@ -11,6 +11,10 @@ export class ProjectService {
 
   constructor(private http: HttpClient) { }
 
+  getAll(): Observable<Project[]>{
+    return this.http.get<Project[]>(`${environment.apiUrl}/projects`);
+  }
+
   create(projectData: Project): Observable<Project> {
     return this.http.post<Project>(`${environment.apiUrl}/create-project`, projectData, {
       withCredentials: true,

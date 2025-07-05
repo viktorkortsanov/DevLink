@@ -1,10 +1,12 @@
 import { Component, signal, computed, OnInit } from '@angular/core';
 import { AuthService } from '../user/auth.service';
 import { RouterLink } from '@angular/router';
+import { ProjectService } from './project.service';
+import { ProjectCardComponent } from './project-card/project-card';
 
 @Component({
   selector: 'app-projects-container',
-  imports: [RouterLink],
+  imports: [RouterLink,ProjectCardComponent],
   templateUrl: './projects.html',
   styleUrls: ['./projects.css']
 })
@@ -13,16 +15,16 @@ export class ProjectsContainerComponent implements OnInit {
   isLoading = signal<boolean>(false);
   searchTerm = signal<string>('');
   currentPage = signal<number>(1);
-  
+
   projectTypeFilter = signal<string>('');
   levelFilter = signal<string>('');
   workTypeFilter = signal<string>('');
-  
+
   projectsPerPage = 3;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private projectService: ProjectService) { }
 
-  
+
   currentUser = computed(() => this.authService.currentUser());
   isDeveloper = computed(() => this.currentUser()?.role === 'developer');
   isEmployer = computed(() => this.currentUser()?.role === 'employer');
@@ -35,7 +37,7 @@ export class ProjectsContainerComponent implements OnInit {
     let projects = this.allProjects();
 
     if (this.searchTerm()) {
-      projects = projects.filter(project => 
+      projects = projects.filter(project =>
         project.title.toLowerCase().includes(this.searchTerm().toLowerCase()) ||
         project.description.toLowerCase().includes(this.searchTerm().toLowerCase())
       );
@@ -62,7 +64,7 @@ export class ProjectsContainerComponent implements OnInit {
     return projects;
   });
 
-  totalPages = computed(() => 
+  totalPages = computed(() =>
     Math.ceil(this.filteredProjects().length / this.projectsPerPage)
   );
 
@@ -72,16 +74,14 @@ export class ProjectsContainerComponent implements OnInit {
     return this.filteredProjects().slice(startIndex, endIndex);
   });
 
-  // Load projects from API
   loadProjects(): void {
-    this.isLoading.set(true);
-    
-    // TODO: Replace with actual API call
-    setTimeout(() => {
-      // Mock data - replace with real API call
-      this.allProjects.set([]);
-      this.isLoading.set(false);
-    }, 1000);
+    this.projectService.getAll().subscribe({
+      next: (projects) => {
+        console.log('Всички проекти:', projects);
+        this.allProjects.set(projects);
+      },
+      error: (err) => console.error('Грешка при зареждане на проекти:', err)
+    });
   }
 
   // Search functionality

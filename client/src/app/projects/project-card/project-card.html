@@ -1,1 +1,41 @@
-<p>project-card works!</p>
+<div class="project-card">
+  <div class="project-logo">
+    @if (hasValidLogo()) {
+      <img 
+        [src]="project.projectLogo" 
+        [alt]="project.title + ' logo'"
+        (error)="onLogoError()">
+    } @else {
+      <svg fill="currentColor" viewBox="0 0 24 24">
+        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+    }
+  </div>
+  
+  <div class="project-content">
+    <div class="project-header">
+      <h3 class="project-title">{{ project.title }}</h3>
+    </div>
+    
+    <p class="project-description">
+      {{ project.shortDescription }}
+    </p>
+    
+    <div class="project-footer">
+      <div class="project-meta">
+        <div class="work-type" [class]="workTypeConfig.class">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path [attr.d]="workTypeConfig.icon"/>
+          </svg>
+          {{ workTypeConfig.label }}
+        </div>
+      </div>
+      
+      <div class="tech-stack">
+        @for (tech of techStackArray; track tech) {
+          <span class="tech-tag">{{ tech }}</span>
+        }
+      </div>
+    </div>
+  </div>
+</div>
