@@ -1,13 +1,15 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, computed, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Project } from '../../types/project';
 import { ProjectService } from '../project.service';
 import { ShortDatePipe } from '../../shared/pipes/date-pipe';
 import { CommonModule } from '@angular/common';
-  
+import { AuthService } from '../../user/auth.service';
+import { ConfirmDialogComponent } from '../../dialog/dialog';
+
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule, ShortDatePipe],
+  imports: [CommonModule, ShortDatePipe, RouterLink, ConfirmDialogComponent],
   templateUrl: './project-details.html',
   styleUrls: ['./project-details.css']
 })
@@ -15,8 +17,10 @@ export class ProjectDetailsComponent implements OnInit {
   project: Project | null = null;
   isLoading = signal<boolean>(true);
   logoError = signal<boolean>(false);
+  currentUser = computed(() => this.authService.currentUser());
+  showDeleteDialog = signal<boolean>(false);
 
-  constructor(private route: ActivatedRoute, private projectService: ProjectService) { }
+  constructor(private route: ActivatedRoute, private projectService: ProjectService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.loadProjectDetails();
@@ -114,6 +118,14 @@ export class ProjectDetailsComponent implements OnInit {
 
   onSaveToggle(): void {
     // TODO: Save / unsave logic
+  }
+
+  onDelete(): void {
+    this.showDeleteDialog.set(true);
+  }
+
+  onCloseDeleteDialog(): void {
+    this.showDeleteDialog.set(false);
   }
 
   onApply(): void {
