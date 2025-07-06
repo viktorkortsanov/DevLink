@@ -10,6 +10,7 @@ export interface Project {
     workType: 'office' | 'hybrid' | 'remote';
     techStack: string;
     createdAt?: string;
+    owner?: string;
     favourites?: string[];
 }
 
