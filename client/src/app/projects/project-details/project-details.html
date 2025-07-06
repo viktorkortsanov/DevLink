@@ -8,6 +8,11 @@
   message="Are you sure you want to delete this project?" confirmText="Delete" cancelText="Cancel"
   (cancel)="onCloseDeleteDialog()">
 </app-confirm-dialog>
+<app-applicants-dialog
+  [isVisible]="showApplicantsDialog()"
+  [appliedUsers]="project.appliedUsers || []"
+  (close)="onCloseApplicantsDialog()">
+</app-applicants-dialog>
 <div class="project-details">
   <div class="project-header">
     @if(currentUser()){
@@ -21,6 +26,14 @@
       </button>
       }
       @if (currentUser()?._id === project.owner) {
+      <button class="applicants-button" (click)="onViewApplicants()">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+          <path
+            d="M18 12c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm0 1c-1.1 0-2.69.33-4 .83.38.66.62 1.43.62 2.17v1h6v-1c0-1.1-1.34-3-2.62-3z" />
+        </svg>
+      </button>
       <a class="edit-link" [routerLink]="['/projects', project._id, 'edit']">
         <svg fill="currentColor" viewBox="0 0 24 24">
           <path

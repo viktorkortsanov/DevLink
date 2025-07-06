@@ -5,10 +5,11 @@ import { ProjectService } from '../project.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../user/auth.service';
 import { ConfirmDialogComponent } from '../../dialog/dialog';
+import { ApplicantsDialogComponent } from '../applicants-dialog/applicants-dialog';
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule, RouterLink, ConfirmDialogComponent],
+  imports: [CommonModule, RouterLink, ConfirmDialogComponent, ApplicantsDialogComponent],
   templateUrl: './project-details.html',
   styleUrls: ['./project-details.css']
 })
@@ -19,6 +20,7 @@ export class ProjectDetailsComponent implements OnInit {
   currentUser = computed(() => this.authService.currentUser());
   showDeleteDialog = signal<boolean>(false);
   isApplied = signal<boolean>(false);
+  showApplicantsDialog = signal<boolean>(false);
 
   constructor(private route: ActivatedRoute, private projectService: ProjectService, private authService: AuthService) { }
 
@@ -135,6 +137,16 @@ export class ProjectDetailsComponent implements OnInit {
   onCloseDeleteDialog(): void {
     this.showDeleteDialog.set(false);
   }
+
+  onViewApplicants(): void {
+    this.showApplicantsDialog.set(true);
+  }
+
+  onCloseApplicantsDialog(): void {
+    this.showApplicantsDialog.set(false);
+  }
+
+
 
   onApply(): void {
     const userId = this.currentUser()?._id;

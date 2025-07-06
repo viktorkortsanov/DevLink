@@ -342,6 +342,25 @@
   height: 1rem;
 }
 
+.applicants-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  color: #ffffff;
+}
+
+.applicants-button:hover {
+  background: #10b981;
+}
+
+.applicants-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;

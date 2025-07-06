@@ -1,0 +1,71 @@
+@if (isVisible) {
+  <div class="dialog-overlay" (click)="onOverlayClick()">
+    <div class="dialog-content" (click)="onContentClick($event)">
+      <div class="dialog-header">
+        <h3 class="dialog-title">Applied Developers</h3>
+        <button class="close-button" (click)="onClose()">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="dialog-body">
+        @if (isLoading()) {
+          <div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading applicants...</p>
+          </div>
+        } @else if (applicants().length === 0) {
+          <div class="empty-state">
+            <svg width="48" height="48" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zm4 18v-6h-2.5l-.68-1.86C16.1 12.05 14.73 11 13.06 11H9.94c-1.67 0-3.04 1.05-3.72 3.14L5.5 16H3v6h2v-2h14v2h2z"/>
+            </svg>
+            <h4>No applicants yet</h4>
+            <p>No one has applied for this project yet.</p>
+          </div>
+        } @else {
+          <div class="applicants-list">
+            @for (applicant of applicants(); track applicant._id) {
+              <div class="applicant-card">
+                <div class="applicant-avatar">
+                  @if (hasValidProfileImage(applicant)) {
+                    <img 
+                      [src]="applicant.profileImage" 
+                      [alt]="applicant.username + ' avatar'"
+                      class="avatar-image">
+                  } @else {
+                    <div class="avatar-placeholder">
+                      {{ getUserInitials(applicant.username) }}
+                    </div>
+                  }
+                </div>
+                
+                <div class="applicant-info">
+                  <h4 class="applicant-name">{{ applicant.username }}</h4>
+                  @if (applicant.bio) {
+                    <p class="applicant-bio">{{ applicant.bio }}</p>
+                  }
+                  @if (applicant.appliedAt) {
+                    <span class="applied-date">Applied {{ applicant.appliedAt | date:'dd.MM.yyyy' }}</span>
+                  }
+                </div>
+                
+                <div class="applicant-actions">
+                  <a 
+                    class="info-button"
+                    [routerLink]="['/profile', applicant._id]"
+                    title="View Profile">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

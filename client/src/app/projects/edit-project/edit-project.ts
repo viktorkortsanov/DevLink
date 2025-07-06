@@ -218,10 +218,10 @@ export class EditProjectComponent implements OnInit {
   onCancel(): void {
     if (this.projectForm.dirty) {
       if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
-        this.router.navigate(['/projects', this.projectId]);
+        this.router.navigate(['/projects', this.projectId, 'details']);
       }
     } else {
-      this.router.navigate(['/projects', this.projectId]);
+      this.router.navigate(['/projects', this.projectId,'details']);
     }
   }
 
