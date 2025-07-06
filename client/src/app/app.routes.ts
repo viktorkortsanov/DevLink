@@ -7,6 +7,7 @@ import { EditProfileComponent } from './user/edit-profile/edit-profile';
 import { ProjectsContainerComponent } from './projects/projects';
 import { CreateProjectComponent } from './projects/create-project/create-project';
 import { ProjectDetailsComponent } from './projects/project-details/project-details';
+import { EditProjectComponent } from './projects/edit-project/edit-project';
 
 export const routes: Routes = [
     { path: '', component: Main },
@@ -17,4 +18,5 @@ export const routes: Routes = [
     { path: 'projects', component: ProjectsContainerComponent },
     { path: 'create-project', component: CreateProjectComponent },
     { path: 'projects/:projectId/details', component: ProjectDetailsComponent },
+    { path: 'projects/:projectId/edit', component: EditProjectComponent },
 ];

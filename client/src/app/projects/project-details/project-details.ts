@@ -9,7 +9,7 @@ import { ConfirmDialogComponent } from '../../dialog/dialog';
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule, ShortDatePipe, RouterLink, ConfirmDialogComponent],
+  imports: [CommonModule, RouterLink, ConfirmDialogComponent],
   templateUrl: './project-details.html',
   styleUrls: ['./project-details.css']
 })

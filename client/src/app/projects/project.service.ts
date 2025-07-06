@@ -11,18 +11,23 @@ export class ProjectService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<Project[]>{
+  getAll(): Observable<Project[]> {
     return this.http.get<Project[]>(`${environment.apiUrl}/projects`);
-  }
+  };
 
   getDetails(projectId: string | null) {
     return this.http.get<Project>(`${environment.apiUrl}/projects/${projectId}/details`)
-  }
+  };
 
   create(projectData: Project): Observable<Project> {
     return this.http.post<Project>(`${environment.apiUrl}/create-project`, projectData, {
-      withCredentials: true,
+      withCredentials: true
+    });
+  };
+
+  updateProject(projectId: string | null, projectData: Project) {
+    return this.http.post<Project>(`${environment.apiUrl}/projects/${projectId}/edit`, projectData, {
+      withCredentials: true
     });
   }
-
 }

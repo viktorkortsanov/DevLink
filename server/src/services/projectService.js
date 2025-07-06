@@ -12,7 +12,11 @@ const projectService = {
 
     create(projectData, userId) {
         return Project.create({ ...projectData, owner: userId });
-    }
+    },
+
+    edit(projectId, projectData) {
+        return Project.findByIdAndUpdate(projectId, projectData, { runValidators: true });
+    },
 }
 
 export default projectService;
