@@ -18,6 +18,7 @@ export class ProjectDetailsComponent implements OnInit {
   logoError = signal<boolean>(false);
   currentUser = computed(() => this.authService.currentUser());
   showDeleteDialog = signal<boolean>(false);
+  isApplied = signal<boolean>(false);
 
   constructor(private route: ActivatedRoute, private projectService: ProjectService, private authService: AuthService) { }
 
@@ -30,8 +31,18 @@ export class ProjectDetailsComponent implements OnInit {
 
     this.projectService.getDetails(projectId).subscribe((p) => {
       this.project = p;
+      const userId = this.currentUser()?._id;
+
+      if (userId && this.project.appliedUsers?.includes(userId)) {
+        this.isApplied.set(true);
+        console.log('Yes');
+
+      } else {
+        this.isApplied.set(false);
+        console.log('No');
+      }
       this.isLoading.set(false);
-    })
+    });
   }
 
   get requirementsList(): string[] {
@@ -106,7 +117,6 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   onTechIconError(event: any): void {
-    // Hide the broken icon
     event.target.style.display = 'none';
   }
 
@@ -127,7 +137,16 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   onApply(): void {
-    // TODO: Apply logic
+    const userId = this.currentUser()?._id;
+    const projectId = this.project?._id;
+    this.projectService.applyProject(projectId, userId).subscribe({
+      next: () => {
+        this.isApplied.set(true);
+      },
+      error: (err) => {
+        console.error('Грешка при кандидатстване:', err);
+      }
+    });
   }
 
   hasValidLogo(): boolean {

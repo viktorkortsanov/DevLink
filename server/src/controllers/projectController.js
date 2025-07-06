@@ -65,6 +65,25 @@ projectController.get('/projects/:projectId/delete', async (req, res) => {
     }
 });
 
+projectController.get('/projects/:projectId/:userId/apply', async (req, res) => {
+  const userId = req.params.userId;
+  const projectId = req.params.projectId;
+
+  try {
+    const isOwner = await isProjectOwner(projectId, userId);
+    if (isOwner) {
+      return res.status(403).json({ error: 'Owners cannot apply to their own projects.' });
+    }
+
+    await projectService.apply(projectId, userId);
+    res.status(200).json({ message: 'Project applied successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to apply to this project.' });
+  }
+});
+
+
+
 async function isProjectOwner(projectId, userId) {
     const project = await projectService.getOne(projectId);
     return project.owner.toString() === userId;

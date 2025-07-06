@@ -20,7 +20,11 @@ const projectService = {
 
     delete(projectId) {
         return Project.findByIdAndDelete(projectId);
-    }
+    },
+
+    apply(projectId, userId) {
+        return Project.findByIdAndUpdate(projectId, { $push: { appliedUsers: userId } });
+    },
 }
 
 export default projectService;

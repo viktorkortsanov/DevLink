@@ -17,7 +17,7 @@ export class ProjectsContainerComponent implements OnInit {
   projectTypeFilter = signal<string>('');
   levelFilter = signal<string>('');
   workTypeFilter = signal<string>('');
-
+  
   projectsPerPage = 3;
 
   constructor(private authService: AuthService, private projectService: ProjectService) { }

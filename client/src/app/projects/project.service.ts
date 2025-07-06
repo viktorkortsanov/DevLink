@@ -35,5 +35,9 @@ export class ProjectService {
     return this.http.get(`${environment.apiUrl}/projects/${projectId}/delete`, {
       withCredentials: true
     })
+  };
+
+  applyProject(projectId: string | undefined, userId: string | undefined) {
+    return this.http.get(`${environment.apiUrl}/projects/${projectId}/${userId}/apply`);
   }
 }

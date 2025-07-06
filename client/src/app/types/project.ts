@@ -11,6 +11,7 @@ export interface Project {
     techStack: string;
     createdAt?: string;
     owner?: string;
+    appliedUsers?: string[],
     favourites?: string[];
 }
 

@@ -45,6 +45,10 @@ const projectSchema = new Schema({
         ref: 'User',
         required: true
     },
+    appliedUsers: [{
+        type: Types.ObjectId,
+        ref: 'User',
+    }],
     favourites: [{
         type: Types.ObjectId,
         ref: 'User',
