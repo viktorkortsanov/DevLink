@@ -17,6 +17,10 @@ const projectService = {
     edit(projectId, projectData) {
         return Project.findByIdAndUpdate(projectId, projectData, { runValidators: true });
     },
+
+    delete(projectId) {
+        return Project.findByIdAndDelete(projectId);
+    }
 }
 
 export default projectService;

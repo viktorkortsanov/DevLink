@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ProjectService } from '../projects/project.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './dialog.html',
   styleUrls: ['./dialog.css']
 })
@@ -18,21 +19,22 @@ export class ConfirmDialogComponent {
 
   @Output() cancel = new EventEmitter<void>();
 
+  constructor(private projectService: ProjectService, private router: Router) {}
+
   onConfirm(): void {
     if (this.projectId) {
-      // TODO: Add your delete project logic here
-      // this.projectService.deleteProject(this.projectId).subscribe({
-      //   next: () => {
-      //     console.log('Project deleted successfully');
-      //     this.cancel.emit(); // Close dialog after successful delete
-      //   },
-      //   error: (error) => {
-      //     console.error('Error deleting project:', error);
-      //   }
-      // });
-      
+      this.projectService.deleteProject(this.projectId).subscribe({
+        next: () => {
+          console.log('Project deleted successfully');
+          this.router.navigate(['/projects']);
+          this.cancel.emit();
+        },
+        error: (error) => {
+          console.error('Error deleting project:', error);
+        }
+      });
       console.log('Deleting project with ID:', this.projectId);
-      this.cancel.emit(); // Close dialog (remove this when implementing real logic)
+      this.cancel.emit();
     }
   }
 

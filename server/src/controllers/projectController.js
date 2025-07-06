@@ -52,6 +52,19 @@ projectController.post('/projects/:projectId/edit', async (req, res) => {
     }
 });
 
+projectController.get('/projects/:projectId/delete', async (req, res) => {
+    if (!isProjectOwner(req.params.projectId, req.user?._id)) {
+        return res.status(403).json({ error: 'Not authorized to delete this project.' });
+    }
+
+    try {
+        await projectService.delete(req.params.projectId);
+        res.status(200).json({ message: 'Project deleted successfully.' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete project.' });
+    }
+});
+
 async function isProjectOwner(projectId, userId) {
     const project = await projectService.getOne(projectId);
     return project.owner.toString() === userId;

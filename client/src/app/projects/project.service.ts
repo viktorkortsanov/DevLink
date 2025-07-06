@@ -29,5 +29,11 @@ export class ProjectService {
     return this.http.post<Project>(`${environment.apiUrl}/projects/${projectId}/edit`, projectData, {
       withCredentials: true
     });
+  };
+
+  deleteProject(projectId: string | null) {
+    return this.http.get(`${environment.apiUrl}/projects/${projectId}/delete`, {
+      withCredentials: true
+    })
   }
 }
