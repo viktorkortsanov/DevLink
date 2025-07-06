@@ -6,16 +6,14 @@ import { ProjectCardComponent } from './project-card/project-card';
 
 @Component({
   selector: 'app-projects-container',
-  imports: [RouterLink,ProjectCardComponent],
+  imports: [RouterLink, ProjectCardComponent],
   templateUrl: './projects.html',
   styleUrls: ['./projects.css']
 })
 export class ProjectsContainerComponent implements OnInit {
   allProjects = signal<any[]>([]);
   isLoading = signal<boolean>(false);
-  searchTerm = signal<string>('');
   currentPage = signal<number>(1);
-
   projectTypeFilter = signal<string>('');
   levelFilter = signal<string>('');
   workTypeFilter = signal<string>('');
@@ -23,7 +21,6 @@ export class ProjectsContainerComponent implements OnInit {
   projectsPerPage = 3;
 
   constructor(private authService: AuthService, private projectService: ProjectService) { }
-
 
   currentUser = computed(() => this.authService.currentUser());
   isDeveloper = computed(() => this.currentUser()?.role === 'developer');
@@ -36,13 +33,6 @@ export class ProjectsContainerComponent implements OnInit {
   filteredProjects = computed(() => {
     let projects = this.allProjects();
 
-    if (this.searchTerm()) {
-      projects = projects.filter(project =>
-        project.title.toLowerCase().includes(this.searchTerm().toLowerCase()) ||
-        project.description.toLowerCase().includes(this.searchTerm().toLowerCase())
-      );
-    }
-
     if (this.projectTypeFilter()) {
       projects = projects.filter(project =>
         project.projectType && project.projectType.toLowerCase() === this.projectTypeFilter().toLowerCase()
@@ -51,7 +41,7 @@ export class ProjectsContainerComponent implements OnInit {
 
     if (this.levelFilter()) {
       projects = projects.filter(project =>
-        project.level && project.level.toLowerCase() === this.levelFilter().toLowerCase()
+        project.experienceLevel && project.experienceLevel.toLowerCase() === this.levelFilter().toLowerCase()
       );
     }
 
@@ -77,24 +67,12 @@ export class ProjectsContainerComponent implements OnInit {
   loadProjects(): void {
     this.projectService.getAll().subscribe({
       next: (projects) => {
-        console.log('Всички проекти:', projects);
         this.allProjects.set(projects);
       },
       error: (err) => console.error('Грешка при зареждане на проекти:', err)
     });
   }
 
-  // Search functionality
-  onSearchChange(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.searchTerm.set(target.value);
-  }
-
-  onSearch(): void {
-    this.currentPage.set(1); // Reset to first page when searching
-  }
-
-  // Filter functionality
   onFilterChange(filterType: string, event: Event): void {
     const target = event.target as HTMLSelectElement;
     const value = target.value;
@@ -111,10 +89,16 @@ export class ProjectsContainerComponent implements OnInit {
         break;
     }
 
-    this.currentPage.set(1); // Reset to first page when filtering
+    this.currentPage.set(1);
   }
 
-  // Pagination functionality
+  clearFilters(): void {
+    this.projectTypeFilter.set('');
+    this.levelFilter.set('');
+    this.workTypeFilter.set('');
+    this.currentPage.set(1);
+  }
+
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages()) {
       this.currentPage.set(page);
@@ -127,19 +111,16 @@ export class ProjectsContainerComponent implements OnInit {
     const pages: (number | string)[] = [];
 
     if (total <= 7) {
-      // Show all pages if total is 7 or less
       for (let i = 1; i <= total; i++) {
         pages.push(i);
       }
     } else {
-      // Always show first page
       pages.push(1);
 
       if (current > 3) {
         pages.push('...');
       }
 
-      // Show pages around current page
       const start = Math.max(2, current - 1);
       const end = Math.min(total - 1, current + 1);
 
@@ -153,23 +134,11 @@ export class ProjectsContainerComponent implements OnInit {
         pages.push('...');
       }
 
-      // Always show last page
       if (total > 1) {
         pages.push(total);
       }
     }
 
     return pages;
-  }
-
-  // Project actions
-  onSaveProject(projectId: string): void {
-    console.log('Save project:', projectId);
-    // TODO: Implement save project logic
-  }
-
-  onLearnMore(projectId: string): void {
-    console.log('Learn more about project:', projectId);
-    // TODO: Navigate to project details page
   }
 }

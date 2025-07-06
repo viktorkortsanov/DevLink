@@ -11,23 +11,11 @@
         }
     </div>
 
-    <!-- Search and Filters Section -->
-    <div class="search-filters">
-        <!-- Search Bar -->
-        <div class="search-bar">
-            <!-- TODO: Add [value] binding and (input) event -->
-            <input type="text" class="search-input" placeholder="Search projects...">
-            <!-- TODO: Add (click) event for search -->
-            <button class="search-btn">Search</button>
-        </div>
-
-        <!-- Filters Row -->
+    <div class="filters-section">
         <div class="filters">
-            <!-- Project Type Filter -->
             <div class="filter-group">
                 <label class="filter-label">Project Type</label>
-                <!-- TODO: Add (change) event handler -->
-                <select class="filter-select">
+                <select class="filter-select" [value]="projectTypeFilter()" (change)="onFilterChange('projectType', $event)">
                     <option value="">All Types</option>
                     <option value="front-end">Front-End</option>
                     <option value="back-end">Back-End</option>
@@ -38,11 +26,9 @@
                 </select>
             </div>
 
-            <!-- Experience Level Filter -->
             <div class="filter-group">
                 <label class="filter-label">Experience Level</label>
-                <!-- TODO: Add (change) event handler -->
-                <select class="filter-select">
+                <select class="filter-select" [value]="levelFilter()" (change)="onFilterChange('level', $event)">
                     <option value="">All Levels</option>
                     <option value="junior">Junior / Intern</option>
                     <option value="mid">Mid</option>
@@ -50,30 +36,36 @@
                 </select>
             </div>
 
-            <!-- Work Type Filter -->
             <div class="filter-group">
                 <label class="filter-label">Work Type</label>
-                <!-- TODO: Add (change) event handler -->
-                <select class="filter-select">
+                <select class="filter-select" [value]="workTypeFilter()" (change)="onFilterChange('workType', $event)">
                     <option value="">All Work Types</option>
                     <option value="office">Office</option>
                     <option value="hybrid">Hybrid</option>
                     <option value="remote">Fully Remote</option>
                 </select>
             </div>
+
+            <div class="filter-group">
+                <button class="clear-filters-btn" (click)="clearFilters()">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                    Clear Filters
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Loading State -->
-    <!-- TODO: Add @if condition for loading state -->
-    <div class="loading-state" style="display: none;">
+    @if (isLoading()) {
+    <div class="loading-state">
         <div class="loading-spinner"></div>
         <p>Loading projects...</p>
     </div>
+    } @else {
 
     <div class="projects-list">
-
-        @if (allProjects().length === 0) {
+        @if (paginatedProjects().length === 0) {
         <div class="project-card empty-state">
             <div class="empty-content">
                 <svg width="64" height="64" fill="currentColor" viewBox="0 0 24 24"
@@ -82,45 +74,50 @@
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <h3 style="color: #4a5568; margin-bottom: 0.5rem;">No projects found</h3>
+                @if (projectTypeFilter() || levelFilter() || workTypeFilter()) {
+                <p style="color: #718096;">Try adjusting your filters to see more projects.</p>
+                } @else {
                 <p style="color: #718096;">There are currently no projects available.</p>
+                }
             </div>
         </div>
         } @else {
-        @for (project of allProjects(); track project._id) {
+        @for (project of paginatedProjects(); track project._id) {
         <app-project-card [project]="project" />
         }
         }
-
     </div>
 
-
-    <!-- Pagination Section -->
-    <!-- TODO: Add conditions for pagination visibility -->
+    @if (totalPages() > 1) {
     <div class="pagination">
-        <!-- Previous Button -->
-        <!-- TODO: Add [disabled] condition and (click) handler -->
-        <button class="pagination-btn">Previous</button>
+        <button 
+            class="pagination-btn" 
+            [disabled]="currentPage() === 1"
+            (click)="goToPage(currentPage() - 1)">
+            Previous
+        </button>
 
-        <!-- Page Numbers -->
-        <!-- TODO: Add @for loop for visible pages -->
-        <!-- TODO: Add [class.active] condition -->
-        <button class="pagination-btn active">1</button>
-        <button class="pagination-btn">2</button>
-        <button class="pagination-btn">3</button>
+        @for (page of getVisiblePages(); track page) {
+        @if (page === '...') {
         <span class="pagination-info">...</span>
+        } @else {
+        <button 
+            class="pagination-btn" 
+            [class.active]="page === currentPage()"
+            (click)="goToPage(+page)">
+            {{ page }}
+        </button>
+        }
+        }
 
-        <!-- Next Button -->
-        <!-- TODO: Add [disabled] condition and (click) handler -->
-        <button class="pagination-btn">Next</button>
+        <button 
+            class="pagination-btn" 
+            [disabled]="currentPage() === totalPages()"
+            (click)="goToPage(currentPage() + 1)">
+            Next
+        </button>
     </div>
+    }
 
-    <!-- Empty State -->
-    <!-- TODO: Add @if condition for no projects -->
-    <div class="empty-state" style="display: none;">
-        <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-        </svg>
-        <h3>No projects found</h3>
-        <p>Try adjusting your search criteria or filters</p>
-    </div>
+    }
 </div>

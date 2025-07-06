@@ -7,7 +7,6 @@ const projectSchema = new Schema({
     },
     projectLogo: {
         type: String,
-        required: true
     },
     shortDescription: {
         type: String,

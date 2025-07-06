@@ -2,7 +2,6 @@ import { Component, computed, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Project } from '../../types/project';
 import { ProjectService } from '../project.service';
-import { ShortDatePipe } from '../../shared/pipes/date-pipe';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../user/auth.service';
 import { ConfirmDialogComponent } from '../../dialog/dialog';
@@ -30,7 +29,6 @@ export class ProjectDetailsComponent implements OnInit {
     const projectId = this.route.snapshot.paramMap.get('projectId');
 
     this.projectService.getDetails(projectId).subscribe((p) => {
-      console.log(p);
       this.project = p;
       this.isLoading.set(false);
     })
