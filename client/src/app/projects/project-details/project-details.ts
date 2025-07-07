@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../user/auth.service';
 import { ConfirmDialogComponent } from '../../dialog/dialog';
 import { ApplicantsDialogComponent } from '../applicants-dialog/applicants-dialog';
+import { User } from '../../types/user';
+import { UserService } from '../../user/user.service';
 
 @Component({
   selector: 'app-project-details',
@@ -15,37 +17,56 @@ import { ApplicantsDialogComponent } from '../applicants-dialog/applicants-dialo
 })
 export class ProjectDetailsComponent implements OnInit {
   project: Project | null = null;
+  user: User | null = null;
   isLoading = signal<boolean>(true);
   logoError = signal<boolean>(false);
   currentUser = computed(() => this.authService.currentUser());
   showDeleteDialog = signal<boolean>(false);
   isApplied = signal<boolean>(false);
+  isSaved = signal<boolean>(false);
   showApplicantsDialog = signal<boolean>(false);
 
-  constructor(private route: ActivatedRoute, private projectService: ProjectService, private authService: AuthService) { }
+  constructor(private route: ActivatedRoute, private projectService: ProjectService, private authService: AuthService, private userService: UserService) { }
 
   ngOnInit(): void {
-    this.loadProjectDetails();
+    const userId = this.currentUser()?._id;
+    if (!userId) return;
+
+    this.userService.getUserInfo(userId).subscribe({
+      next: (userInfo) => {
+        this.user = userInfo;
+        this.loadProjectDetails();
+      },
+      error: (err) => console.error(err)
+    });
   }
+
+
 
   loadProjectDetails(): void {
     const projectId = this.route.snapshot.paramMap.get('projectId');
 
-    this.projectService.getDetails(projectId).subscribe((p) => {
-      this.project = p;
-      const userId = this.currentUser()?._id;
-
-      if (userId && this.project.appliedUsers?.includes(userId)) {
-        this.isApplied.set(true);
-        console.log('Yes');
-
-      } else {
-        this.isApplied.set(false);
-        console.log('No');
-      }
+    if (!projectId) {
+      console.error('Missing projectId from route');
       this.isLoading.set(false);
+      return;
+    }
+
+    this.projectService.getDetails(projectId).subscribe({
+      next: (p) => {
+        this.project = p;
+        const userId = this.currentUser()?._id;
+        this.isApplied.set(!!(userId && this.project.appliedUsers?.includes(userId)));
+        this.isSaved.set(!!this.user?.savedProjects?.includes(projectId));
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading project details:', err);
+        this.isLoading.set(false);
+      }
     });
   }
+
 
   get requirementsList(): string[] {
     return this.project?.requirements
@@ -127,7 +148,14 @@ export class ProjectDetailsComponent implements OnInit {
   }
 
   onSaveToggle(): void {
-    // TODO: Save / unsave logic
+    this.isSaved.set(!this.isSaved());
+    this.projectService.saveProject(this.project?._id, this.currentUser()?._id).subscribe({
+      next: () => {
+      },
+      error: (err) => {
+        console.error('Грешка при save:', err);
+      }
+    });
   }
 
   onDelete(): void {

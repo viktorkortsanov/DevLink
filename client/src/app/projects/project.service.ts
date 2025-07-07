@@ -39,5 +39,9 @@ export class ProjectService {
 
   applyProject(projectId: string | undefined, userId: string | undefined) {
     return this.http.get(`${environment.apiUrl}/projects/${projectId}/${userId}/apply`);
+  };
+
+  saveProject(projectId: string | undefined, userId: string | undefined) {
+    return this.http.get(`${environment.apiUrl}/projects/${projectId}/${userId}/save`);
   }
 }

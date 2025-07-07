@@ -39,6 +39,17 @@ userController.post('/profile/:userId/star', async (req,res) => {
   }
 });
 
+userController.get('/peojects/:projectId/:userId/save', async (req,res) => {
+    try {
+    const projectId = req.params.projectId;
+    const userId = req.params.userId;
+    await userService.saveProject(userId, projectId);
+    res.status(200)
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
 userController.put('/users/:userId/updateProfileImage', async (req, res) => {
     const { userId } = req.params;
     const { profileImageUrl } = req.body;

@@ -361,6 +361,10 @@
   height: 1.25rem;
 }
 
+.save-button.saved {
+  background: #0080ff;
+}
+
 @media (max-width: 768px) {
   .header-content {
     flex-direction: column;
