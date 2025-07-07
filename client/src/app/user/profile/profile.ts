@@ -4,11 +4,13 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CapitalizePipe } from '../../shared/pipes/capitalize-pipe';
 import { UserService } from '../user.service';
 import { User } from '../../types/user';
+import { ProjectService } from '../../projects/project.service';
+import { ProjectCardComponent } from '../../projects/project-card/project-card';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [RouterLink, CapitalizePipe],
+  imports: [RouterLink, CapitalizePipe, ProjectCardComponent],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
@@ -19,35 +21,110 @@ export class ProfileComponent implements OnInit {
   appliedProjects = signal<any[]>([]);
   savedProjects = signal<any[]>([]);
   postedProjects = signal<any[]>([]);
-  savedDevelopers = signal<any[]>([]);
 
-  userBio = signal<string>('');
-  userLocation = signal<string>('');
-  githubUrl = signal<string>('');
-  linkedinUrl = signal<string>('');
+  isLoadingFirst = signal<boolean>(false);
+  isLoadingSecond = signal<boolean>(false);
 
-  constructor(private authService: AuthService, private userService: UserService, private route: ActivatedRoute) { }
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private projectService: ProjectService,
+    private route: ActivatedRoute
+  ) { }
+
   currentUser = computed(() => this.authService.currentUser());
   isDeveloper = computed(() => this.currentUser()?.role === 'developer');
   isEmployer = computed(() => this.currentUser()?.role === 'employer');
-  emailUrl = computed(() => `mailto:${this.currentUser()?.email || ''}`);
 
   ngOnInit(): void {
     const userId = this.route.snapshot.paramMap.get('userId');
-    this.userService.getUserInfo(userId).subscribe((userInfo) => {
-      this.user = userInfo;
+    this.loadUserInfo(userId);
+    this.loadFirstTabData(userId);
+  }
+
+  loadUserInfo(userId: string | null): void {
+    if (!userId) return;
+
+    this.userService.getUserInfo(userId).subscribe({
+      next: (userInfo) => {
+        this.user = userInfo;
+      },
+      error: (error) => {
+        console.error('Error loading user info:', error);
+      }
     });
   }
 
-  getRoleDisplay(): string {
-    const role = this.currentUser()?.role;
-    if (role === 'developer') {
-      return 'Developer';
-    } else if (role === 'employer') {
-      return 'Employer';
+  loadFirstTabData(userId: string | null): void {
+    if (!userId) return;
+
+    this.isLoadingFirst.set(true);
+
+    if (this.isDeveloper()) {
+      const userId = this.authService.currentUser()?._id;
+
+      this.projectService.getAll().subscribe({
+        next: (projects) => {
+          if (!userId) return;
+
+          const filtered = projects.filter(p => p.appliedUsers?.includes(userId));
+          this.appliedProjects.set(filtered);
+          this.isLoadingFirst.set(false);
+        },
+        error: (error) => {
+          console.error('Error loading applied projects:', error);
+          this.isLoadingFirst.set(false);
+        }
+      });
+    } else {
+      this.projectService.getAll().subscribe({
+        next: (allProjects) => {
+          const userProjects = allProjects.filter(project => project.owner === userId);
+          this.postedProjects.set(userProjects);
+          this.isLoadingFirst.set(false);
+        },
+        error: (error) => {
+          console.error('Error loading posted projects:', error);
+          this.isLoadingFirst.set(false);
+        }
+      });
     }
-    return 'User';
-  };
+  }
+
+  loadSecondTabData(userId: string | null): void {
+    if (!userId || this.isLoadingSecond()) return;
+
+    this.isLoadingSecond.set(true);
+
+    if (this.isDeveloper()) {
+      this.projectService.getAll().subscribe({
+        next: (projects) => {
+          const saved = projects.filter(p =>
+            p._id && this.user?.savedProjects?.includes(p._id)
+          );
+
+          this.savedProjects.set(saved);
+          this.isLoadingSecond.set(false);
+        },
+        error: (error) => {
+          console.error('Error loading saved projects:', error);
+          this.isLoadingSecond.set(false);
+        }
+      });
+
+    } else {
+      this.isLoadingSecond.set(false);
+    }
+  }
+
+  switchTab(tab: 'first' | 'second'): void {
+    this.activeTab.set(tab);
+
+    if (tab === 'second' && this.isDeveloper() && this.savedProjects().length === 0) {
+      const userId = this.route.snapshot.paramMap.get('userId');
+      this.loadSecondTabData(userId);
+    }
+  }
 
   generateTechIcon(tech: string): string {
     const normalizedTech = tech.toLowerCase()
@@ -89,11 +166,6 @@ export class ProfileComponent implements OnInit {
   }
 
   getSecondTabEmptyMessage(): string {
-    return this.isDeveloper() ? 'No saved projects yet' : 'No saved developers yet';
-  }
-
-
-  switchTab(tab: 'first' | 'second'): void {
-    this.activeTab.set(tab);
+    return this.isDeveloper() ? 'No saved projects yet' : 'Analytics coming soon';
   }
 }

@@ -328,6 +328,23 @@
     white-space: nowrap;
 }
 
+.projects-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.developers-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.developer-card {
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+}
+
 @media (max-width: 768px) {
     .profile-container {
         flex-direction: column;
