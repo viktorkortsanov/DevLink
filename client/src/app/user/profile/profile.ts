@@ -47,8 +47,35 @@ export class ProfileComponent implements OnInit {
       return 'Employer';
     }
     return 'User';
+  };
+
+  generateTechIcon(tech: string): string {
+    const normalizedTech = tech.toLowerCase()
+      .replace(/[^a-z0-9]/g, '')
+      .replace(/js$/, 'javascript')
+      .replace(/ts$/, 'typescript')
+      .replace(/nodejs/, 'nodejs')
+      .replace(/reactjs/, 'react')
+      .replace(/vuejs/, 'vuejs')
+      .replace(/angularjs/, 'angularjs')
+      .replace(/html/, 'html5')
+      .replace(/css/, 'css3');
+
+    return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${normalizedTech}/${normalizedTech}-original.svg`;
   }
-  
+
+  get techStackArray(): string[] {
+    if (!this.user?.techStack) return [];
+    return this.user.techStack
+      .split(',')
+      .map((tech: string) => tech.trim())
+      .filter((tech: string) => tech.length > 0);
+  }
+
+  onTechIconError(event: any): void {
+    event.target.style.display = 'none';
+  }
+
   getFirstTabLabel(): string {
     return this.isDeveloper() ? 'Applied Projects' : 'Posted Projects';
   }

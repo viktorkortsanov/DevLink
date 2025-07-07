@@ -21,6 +21,21 @@
                 {{ user?.bio || 'No bio available yet. Edit your profile to add a bio.' }}
             </p>
 
+            @if (techStackArray.length > 0) {
+            <div class="tech-stack-section">
+                <h3 class="tech-stack-title">Tech Stack</h3>
+                <div class="tech-stack">
+                    @for (tech of techStackArray; track tech) {
+                    <div class="tech-item">
+                        <img [src]="generateTechIcon(tech)" [alt]="tech + ' icon'" class="tech-icon"
+                            (error)="onTechIconError($event)">
+                        <span class="tech-name">{{ tech }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
             <a [routerLink]="['/edit-profile', user?._id]" class="edit-profile-btn">Edit Profile</a>
         </div>
 

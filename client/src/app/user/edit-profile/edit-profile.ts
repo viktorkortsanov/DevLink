@@ -32,6 +32,7 @@ export class EditProfileComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       profileImage: [''],
       bio: [''],
+      techStack: [''],
       location: [''],
       password: [''],
       rePassword: [''],
@@ -54,6 +55,7 @@ export class EditProfileComponent implements OnInit {
         email: userInfo.email || '',
         profileImage: userInfo.profileImage || '',
         bio: userInfo.bio || '',
+        techStack: userInfo.techStack || '',
         location: userInfo.location || '',
         githubLink: userInfo.githubLink || '',
         linkedinLink: userInfo.linkedinLink || ''
@@ -115,6 +117,7 @@ export class EditProfileComponent implements OnInit {
       email: formValue.email,
       profileImage: formValue.profileImage,
       bio: formValue.bio,
+      techStack: formValue.techStack,
       location: formValue.location,
       githubLink: formValue.githubLink,
       linkedinLink: formValue.linkedinLink
@@ -124,13 +127,13 @@ export class EditProfileComponent implements OnInit {
     this.userService.updateUserInfo(userId, profileData).subscribe({
       next: (updatedUser) => {
         this.isLoading.set(false);
-        localStorage.setItem('user', JSON.stringify({ 
+        localStorage.setItem('user', JSON.stringify({
           _id: updatedUser._id,
-          username: updatedUser.username, 
-          email: updatedUser.email, 
+          username: updatedUser.username,
+          email: updatedUser.email,
           profileImage: updatedUser?.profileImage || null,
-          role: updatedUser.role, 
-          isAdmin: updatedUser.isAdmin 
+          role: updatedUser.role,
+          isAdmin: updatedUser.isAdmin
         }));
         this.router.navigate([`/profile/${userId}`]);
       },

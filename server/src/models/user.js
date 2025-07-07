@@ -52,6 +52,11 @@ const userSchema = new Schema({
         default: null
     },
 
+    techStack: {
+        type: String,
+        default: null,
+    },
+
     location: {
         type: String,
         default: null,

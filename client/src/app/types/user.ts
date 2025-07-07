@@ -29,6 +29,7 @@ export interface User {
   isAdmin?: boolean;
   profileImage?: string;
   bio?: string;
+  techStack?: string;
   savedProjects?: string[],
   location?: string;
   githubLink?: string;
