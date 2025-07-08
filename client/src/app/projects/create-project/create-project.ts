@@ -2,6 +2,9 @@ import { Component, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectService } from '../project.service';
+import { FirebaseStorageService } from '../../services/firebase.service';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { storage } from '../../../config/firebase.config';
 
 @Component({
   selector: 'app-create-project',
@@ -14,7 +17,9 @@ export class CreateProjectComponent implements OnInit {
   projectForm: FormGroup;
   errorMessage = signal<string>('');
   isLoading = signal<boolean>(false);
+  isImageUploading = signal<boolean>(false);
   logoPreviewUrl = signal<string>('');
+  selectedFile: File | null = null;
 
   projectTypes = [
     { value: 'front-end', label: 'Front-End' },
@@ -41,6 +46,7 @@ export class CreateProjectComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private projectService: ProjectService,
+    private firebaseStorageService: FirebaseStorageService
   ) {
     this.projectForm = this.fb.group({
       title: ['', [
@@ -78,26 +84,43 @@ export class CreateProjectComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onLogoUrlChange(): void {
-    const logoUrl = this.projectForm.get('projectLogo')?.value;
-    if (logoUrl && this.isValidImageUrl(logoUrl)) {
-      this.logoPreviewUrl.set(logoUrl);
-    } else {
-      this.logoPreviewUrl.set('');
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      const validation = this.firebaseStorageService.validateFile(file);
+      if (!validation.isValid) {
+        this.errorMessage.set(validation.error || 'Invalid file');
+        return;
+      }
+
+      this.selectedFile = file;
+      this.errorMessage.set('');
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.logoPreviewUrl.set(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  onLogoError(): void {
+  onRemoveImage(): void {
+    this.selectedFile = null;
     this.logoPreviewUrl.set('');
+
+    const fileInput = document.getElementById('projectLogoFile') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 
   getLogoFilename(): string {
-    const logoUrl = this.projectForm.get('projectLogo')?.value;
-    if (logoUrl && this.logoPreviewUrl()) {
-      const filename = logoUrl.substring(logoUrl.lastIndexOf('/') + 1);
-      return `Preview: ${filename}`;
+    if (this.selectedFile) {
+      return `Selected: ${this.selectedFile.name}`;
     }
-    return 'No logo uploaded';
+    return 'No logo selected';
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -138,7 +161,7 @@ export class CreateProjectComponent implements OnInit {
     return 'Invalid input';
   }
 
-  onCreateProject(): void {
+  async onCreateProject(): Promise<void> {
     this.errorMessage.set('');
 
     if (!this.projectForm.valid) {
@@ -149,33 +172,58 @@ export class CreateProjectComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    const projectData = {
-      title: this.projectForm.value.title,
-      projectLogo: this.projectForm.value.projectLogo,
-      shortDescription: this.projectForm.value.shortDescription,
-      fullDescription: this.projectForm.value.fullDescription,
-      requirements: this.projectForm.value.requirements,
-      projectType: this.projectForm.value.projectType,
-      experienceLevel: this.projectForm.value.experienceLevel,
-      workType: this.projectForm.value.workType,
-      techStack: this.projectForm.value.techStack
-    };
+    try {
+      let projectLogoUrl = '';
 
-    console.log('Project data to create:', projectData);
-
-    this.projectService.create(projectData).subscribe({
-      next: (project) => {
-        this.isLoading.set(false);
-        this.router.navigate(['/projects']);
-      },
-      error: (err) => {
-        console.log(err);
+      if (this.selectedFile) {
+        this.isImageUploading.set(true);
+        projectLogoUrl = await this.uploadProjectImage(this.selectedFile);
+        this.isImageUploading.set(false);
       }
-    });
+
+      const projectData = {
+        title: this.projectForm.value.title,
+        projectLogo: projectLogoUrl,
+        shortDescription: this.projectForm.value.shortDescription,
+        fullDescription: this.projectForm.value.fullDescription,
+        requirements: this.projectForm.value.requirements,
+        projectType: this.projectForm.value.projectType,
+        experienceLevel: this.projectForm.value.experienceLevel,
+        workType: this.projectForm.value.workType,
+        techStack: this.projectForm.value.techStack
+      };
+
+      this.projectService.create(projectData).subscribe({
+        next: (project) => {
+          this.isLoading.set(false);
+          this.router.navigate(['/projects']);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(err.error?.message || 'Failed to create project');
+          console.log(err);
+        }
+      });
+
+    } catch (error) {
+      this.isLoading.set(false);
+      this.isImageUploading.set(false);
+      this.errorMessage.set('Failed to upload image. Please try again.');
+      console.error('Error creating project:', error);
+    }
+  }
+
+  private async uploadProjectImage(file: File): Promise<string> {
+    const fileName = `projectImages/${Date.now()}_${file.name}`;
+    const fileRef = ref(storage, fileName);
+    const snapshot = await uploadBytes(fileRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    return downloadURL;
   }
 
   onCancel(): void {
-    if (this.projectForm.dirty) {
+    if (this.projectForm.dirty || this.selectedFile) {
       if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
         this.router.navigate(['/projects']);
       }
@@ -191,14 +239,5 @@ export class CreateProjectComponent implements OnInit {
         control.markAsTouched();
       }
     });
-  }
-
-  private isValidImageUrl(url: string): boolean {
-    try {
-      const urlObj = new URL(url);
-      return /\.(jpg|jpeg|png|gif|svg|webp)(\?.*)?$/i.test(urlObj.pathname);
-    } catch (_) {
-      return false;
-    }
   }
 }

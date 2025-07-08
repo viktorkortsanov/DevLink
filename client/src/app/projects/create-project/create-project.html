@@ -5,14 +5,12 @@
   </div>
 
   <form [formGroup]="projectForm" class="create-project-form">
-    <!-- Error Message -->
     @if (errorMessage()) {
       <div class="error-message">
         {{ errorMessage() }}
       </div>
     }
 
-    <!-- Basic Information -->
     <div class="section-title">
       <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24">
         <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -20,7 +18,6 @@
       Basic Information
     </div>
 
-    <!-- Project Title -->
     <div class="form-group">
       <label class="form-label" for="title">Project Title</label>
       <input 
@@ -37,31 +34,24 @@
       }
     </div>
 
-    <!-- Project Logo -->
     <div class="form-group">
-      <label class="form-label" for="projectLogo">Project Logo URL</label>
-      <input 
-        type="url" 
-        id="projectLogo" 
-        formControlName="projectLogo"
-        class="form-input"
-        [class.error]="isFieldInvalid('projectLogo')"
-        placeholder="https://example.com/logo.png"
-        (input)="onLogoUrlChange()">
-      @if (isFieldInvalid('projectLogo')) {
-        <div class="field-error">
-          {{ getFieldError('projectLogo') }}
-        </div>
-      }
+      <label class="form-label" for="projectLogoFile">Project Logo</label>
+      <div class="file-input-container">
+        <input type="file" id="projectLogoFile" class="file-input" accept="image/*" (change)="onFileSelected($event)">
+        <label for="projectLogoFile" class="file-input-label">
+          <svg class="file-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+          </svg>
+          Choose Logo
+        </label>
+      </div>
       
-      <!-- Logo Preview -->
       <div class="logo-preview">
         <div class="logo-image">
           @if (logoPreviewUrl()) {
             <img 
               [src]="logoPreviewUrl()" 
-              alt="Project logo preview"
-              (error)="onLogoError()">
+              alt="Project logo preview">
           } @else {
             <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
               <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -72,12 +62,25 @@
           <div class="logo-filename">
             {{ getLogoFilename() }}
           </div>
-          <div class="logo-hint">Enter a URL to add project logo</div>
+          <div class="logo-hint">
+            @if (selectedFile) {
+            <span class="ready-upload">Ready to upload • {{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</span>
+            } @else {
+            <span>Select a logo image (JPEG, PNG, GIF, WebP - max 5MB)</span>
+            }
+          </div>
+          @if (selectedFile) {
+          <button type="button" class="remove-image-btn" (click)="onRemoveImage()">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+            </svg>
+            Remove Selected
+          </button>
+          }
         </div>
       </div>
     </div>
 
-    <!-- Short Description -->
     <div class="form-group">
       <label class="form-label" for="shortDescription">Short Description</label>
       <textarea 
@@ -94,7 +97,6 @@
       }
     </div>
 
-    <!-- Full Description -->
     <div class="form-group">
       <label class="form-label" for="fullDescription">Full Description</label>
       <textarea 
@@ -111,7 +113,6 @@
       }
     </div>
 
-    <!-- Requirements -->
     <div class="form-group">
       <label class="form-label" for="requirements">Requirements</label>
       <textarea 
@@ -130,7 +131,6 @@
 
     <hr class="section-divider">
 
-    <!-- Project Details -->
     <div class="section-title">
       <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24">
         <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -140,7 +140,6 @@
     </div>
 
     <div class="form-grid">
-      <!-- Project Type -->
       <div class="form-group">
         <label class="form-label" for="projectType">Project Type</label>
         <select 
@@ -162,7 +161,6 @@
         }
       </div>
 
-      <!-- Experience Level -->
       <div class="form-group">
         <label class="form-label" for="experienceLevel">Experience Level</label>
         <select 
@@ -185,7 +183,6 @@
       </div>
     </div>
 
-    <!-- Work Type -->
     <div class="form-group">
       <label class="form-label" for="workType">Work Type</label>
       <select 
@@ -207,7 +204,6 @@
       }
     </div>
 
-    <!-- Tech Stack -->
     <div class="form-group">
       <label class="form-label" for="techStack">Tech Stack</label>
       <input 
@@ -224,7 +220,6 @@
       }
     </div>
 
-    <!-- Form Actions -->
     <div class="form-actions">
       <button 
         type="button" 
@@ -240,14 +235,22 @@
         type="submit" 
         class="btn btn-primary"
         (click)="onCreateProject()"
-        [disabled]="isLoading() || projectForm.invalid">
+        [disabled]="isLoading() || isImageUploading() || projectForm.invalid">
+        @if (isImageUploading()) {
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" class="spin">
+          <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+        </svg>
+        <span>Uploading logo...</span>
+        } @else if (isLoading()) {
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" class="spin">
+          <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+        </svg>
+        <span>Creating...</span>
+        } @else {
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
           <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
         </svg>
-        @if (!isLoading()) {
-          <span>Create Project</span>
-        } @else {
-          <span>Creating...</span>
+        <span>Create Project</span>
         }
       </button>
     </div>
