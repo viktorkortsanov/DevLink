@@ -1,0 +1,105 @@
+<div class="developers-container">
+  <div class="developers-header">
+    <h1 class="developers-title">Developers Community</h1>
+    <p class="developers-subtitle">
+      Connect with talented developers from around the world. Find collaborators, mentors, or discover new opportunities in our growing community.
+    </p>
+  </div>
+
+  <div class="search-section">
+    <div class="search-container">
+      <svg class="search-icon" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" fill="none"/>
+      </svg>
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search developers by name, skills, or location..."
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()">
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading developers...</p>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="error-container">
+      <p class="error-message">{{ errorMessage() }}</p>
+      <button class="retry-btn" (click)="loadDevelopers()">Try Again</button>
+    </div>
+  }
+
+  @if (!isLoading() && !errorMessage()) {
+    <div class="results-info">
+      @if (filteredDevelopers().length === 0) {
+        No developers found
+      } @else {
+        Showing {{ getPaginatedDevelopers().length }} of {{ filteredDevelopers().length }} developers
+      }
+    </div>
+
+    @if (getPaginatedDevelopers().length > 0) {
+      <div class="developers-grid">
+        @for (developer of getPaginatedDevelopers(); track developer._id) {
+          <app-developer-card [developer]="developer"></app-developer-card>
+        }
+      </div>
+
+      @if (getTotalPages() > 1) {
+        <div class="pagination-section">
+          <div class="pagination-controls">
+            <button 
+              class="pagination-btn" 
+              [disabled]="currentPage() === 1"
+              (click)="goToPage(currentPage() - 1)">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+              Previous
+            </button>
+            
+            <div class="page-numbers">
+              @for (page of getVisiblePages(); track page) {
+                <div 
+                  class="page-number"
+                  [class.active]="page === currentPage()"
+                  (click)="goToPage(page)">
+                  {{ page }}
+                </div>
+              }
+            </div>
+            
+            <button 
+              class="pagination-btn"
+              [disabled]="currentPage() === getTotalPages()"
+              (click)="goToPage(currentPage() + 1)">
+              Next
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </button>
+          </div>
+          <div class="pagination-info">
+            Page {{ currentPage() }} of {{ getTotalPages() }} • {{ filteredDevelopers().length }} total developers
+          </div>
+        </div>
+      }
+    } @else {
+      <div class="empty-state">
+        <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <h3>No developers found</h3>
+        <p>Try adjusting your search criteria or browse all developers</p>
+        @if (searchTerm) {
+          <button class="clear-search-btn" (click)="clearSearch()">Clear Search</button>
+        }
+      </div>
+    }
+  }
+</div>

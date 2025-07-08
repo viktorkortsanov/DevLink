@@ -9,6 +9,7 @@ import { CreateProjectComponent } from './projects/create-project/create-project
 import { ProjectDetailsComponent } from './projects/project-details/project-details';
 import { EditProjectComponent } from './projects/edit-project/edit-project';
 import { UserInfoComponent } from './user/user-info/user-info';
+import { DevelopersContainerComponent } from './developers-container/developers-container';
 
 export const routes: Routes = [
     { path: '', component: Main },
@@ -21,4 +22,5 @@ export const routes: Routes = [
     { path: 'create-project', component: CreateProjectComponent },
     { path: 'projects/:projectId/details', component: ProjectDetailsComponent },
     { path: 'projects/:projectId/edit', component: EditProjectComponent },
+    { path: 'developers', component: DevelopersContainerComponent },
 ];
