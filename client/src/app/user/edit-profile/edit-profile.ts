@@ -1,15 +1,15 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../user.service';
 import { User } from '../../types/user';
 import { AuthService } from '../auth.service';
+import { FirebaseStorageService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, RouterModule],
   templateUrl: './edit-profile.html',
   styleUrls: ['./edit-profile.css']
 })
@@ -17,7 +17,9 @@ export class EditProfileComponent implements OnInit {
   editProfileForm: FormGroup;
   errorMessage = signal<string>('');
   isLoading = signal<boolean>(false);
+  isImageUploading = signal<boolean>(false);
   imagePreviewUrl = signal<string>('');
+  selectedFile: File | null = null;
   userInfo: User | null = null;
 
   constructor(
@@ -25,7 +27,8 @@ export class EditProfileComponent implements OnInit {
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private firebaseStorageService: FirebaseStorageService
   ) {
     this.editProfileForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -60,20 +63,47 @@ export class EditProfileComponent implements OnInit {
         githubLink: userInfo.githubLink || '',
         linkedinLink: userInfo.linkedinLink || ''
       });
+
+      if (userInfo.profileImage) {
+        this.imagePreviewUrl.set(userInfo.profileImage);
+      }
     });
   }
 
-  onImageUrlChange(): void {
-    const imageUrl = this.editProfileForm.get('profileImage')?.value;
-    if (imageUrl && this.isValidUrl(imageUrl)) {
-      this.imagePreviewUrl.set(imageUrl);
-    } else {
-      this.imagePreviewUrl.set('');
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      const validation = this.firebaseStorageService.validateFile(file);
+      if (!validation.isValid) {
+        this.errorMessage.set(validation.error || 'Invalid file');
+        return;
+      }
+
+      this.selectedFile = file;
+      this.errorMessage.set('');
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagePreviewUrl.set(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  onImageError(): void {
+  onRemoveImage(): void {
+    this.selectedFile = null;
     this.imagePreviewUrl.set('');
+
+    if (this.userInfo?.profileImage) {
+      this.imagePreviewUrl.set(this.userInfo.profileImage);
+    }
+
+    const fileInput = document.getElementById('profileImageFile') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 
   getInitials(): string {
@@ -87,15 +117,16 @@ export class EditProfileComponent implements OnInit {
   }
 
   getImageFilename(): string {
-    const imageUrl = this.editProfileForm.get('profileImage')?.value;
-    if (imageUrl && this.imagePreviewUrl()) {
-      const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
-      return `Preview: ${filename}`;
+    if (this.selectedFile) {
+      return `Selected: ${this.selectedFile.name}`;
     }
-    return 'Current: Default Avatar';
+    if (this.userInfo?.profileImage && this.imagePreviewUrl()) {
+      return 'Current profile image';
+    }
+    return 'No image selected';
   }
 
-  onSaveProfile(): void {
+  async onSaveProfile(): Promise<void> {
     this.errorMessage.set('');
 
     if (!this.editProfileForm.valid) {
@@ -112,54 +143,63 @@ export class EditProfileComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    const profileData = {
-      username: formValue.username,
-      email: formValue.email,
-      profileImage: formValue.profileImage,
-      bio: formValue.bio,
-      techStack: formValue.techStack,
-      location: formValue.location,
-      githubLink: formValue.githubLink,
-      linkedinLink: formValue.linkedinLink
-    };
-    const userId = this.route.snapshot.paramMap.get('userId');
-    this.authService.updateUserProfile(profileData);
-    this.userService.updateUserInfo(userId, profileData).subscribe({
-      next: (updatedUser) => {
-        this.isLoading.set(false);
-        localStorage.setItem('user', JSON.stringify({
-          _id: updatedUser._id,
-          username: updatedUser.username,
-          email: updatedUser.email,
-          profileImage: updatedUser?.profileImage || null,
-          role: updatedUser.role,
-          isAdmin: updatedUser.isAdmin
-        }));
-        this.router.navigate([`/profile/${userId}`]);
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorMessage.set(err.error?.message || 'Update failed');
+    try {
+      let profileImageUrl = formValue.profileImage;
+
+      if (this.selectedFile) {
+        this.isImageUploading.set(true);
+        profileImageUrl = await this.firebaseStorageService.uploadProfileImage(this.selectedFile);
+        this.isImageUploading.set(false);
       }
-    });
+
+      const profileData = {
+        username: formValue.username,
+        email: formValue.email,
+        profileImage: profileImageUrl,
+        bio: formValue.bio,
+        techStack: formValue.techStack,
+        location: formValue.location,
+        githubLink: formValue.githubLink,
+        linkedinLink: formValue.linkedinLink
+      };
+
+      const userId = this.route.snapshot.paramMap.get('userId');
+      this.authService.updateUserProfile(profileData);
+
+      this.userService.updateUserInfo(userId, profileData).subscribe({
+        next: (updatedUser) => {
+          this.isLoading.set(false);
+          localStorage.setItem('user', JSON.stringify({
+            _id: updatedUser._id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            profileImage: updatedUser?.profileImage || null,
+            role: updatedUser.role,
+            isAdmin: updatedUser.isAdmin
+          }));
+          this.router.navigate([`/profile/${userId}`]);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(err.error?.message || 'Update failed');
+        }
+      });
+
+    } catch (error) {
+      this.isLoading.set(false);
+      this.isImageUploading.set(false);
+      this.errorMessage.set('Failed to upload image. Please try again.');
+      console.error('Error saving profile:', error);
+    }
   }
 
   onCancel(): void {
-    if (this.editProfileForm.dirty) {
+    if (this.editProfileForm.dirty || this.selectedFile) {
       if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
         this.router.navigate([`/profile/${this.userInfo?._id}`]);
       }
     } else {
       this.router.navigate([`/profile/${this.userInfo?._id}`]);
-    }
-  }
-
-  private isValidUrl(string: string): boolean {
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
     }
   }
 }
