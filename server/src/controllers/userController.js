@@ -50,6 +50,29 @@ userController.get('/peojects/:projectId/:userId/save', async (req,res) => {
   }
 });
 
+userController.get('/peojects/:projectId/:userId/save', async (req,res) => {
+    try {
+    const projectId = req.params.projectId;
+    const userId = req.params.userId;
+    await userService.saveProject(userId, projectId);
+    res.status(200)
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+userController.get('/profile/:devId/:userId/save', async (req, res) => {
+    const devId = req.params.devId;
+    const userId = req.params.userId
+
+    try {
+        await userService.saveDeveloper(userId, devId);
+        res.status(200).json({ message: 'Developer save successfully.' });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to save this developer.' });
+    }
+});
+
 userController.put('/users/:userId/updateProfileImage', async (req, res) => {
     const { userId } = req.params;
     const { profileImageUrl } = req.body;

@@ -37,6 +37,11 @@ const userSchema = new Schema({
         ref: 'Project'
     }],
 
+    savedDevelopers: [{
+        type: Types.ObjectId,
+        ref: 'User'
+    }],
+
     stars: [{
         type: Types.ObjectId,
         ref: 'User'

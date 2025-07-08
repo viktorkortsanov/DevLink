@@ -32,6 +32,15 @@ const userService = {
             return User.findByIdAndUpdate(targetUserId, { $pull: { savedProjects: projectId } });
         }
     },
+    async saveDeveloper(userId, devId) {
+        const user = await User.findById(userId);
+
+        if (!user.savedDevelopers.includes(devId)) {
+            return User.findByIdAndUpdate(userId, { $push: { savedDevelopers: devId } });
+        } else {
+            return User.findByIdAndUpdate(userId, { $pull: { savedDevelopers: devId } });
+        }
+    },
     updateProfileImage: async (userId, profileImage) => {
         const user = await User.findById(userId);
         if (!user) throw new Error('User not found');

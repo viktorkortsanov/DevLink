@@ -31,6 +31,7 @@ export interface User {
   bio?: string;
   techStack?: string;
   savedProjects?: string[],
+  savedDevelopers?: string[],
   location?: string;
   githubLink?: string;
   linkedinLink?: string;

@@ -6,6 +6,22 @@
 } @else if (user()) {
 <div class="user-info-container">
     <div class="profile-card">
+        <!-- Save Button inside profile card -->
+        <!-- Save Button inside profile card -->
+        <div class="save-button-container">
+            <button class="save-btn" (click)="onSaveUser()" title="Add to Favorites">
+                @if (isSaved()) {
+                <svg class="save-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                </svg>
+                } @else {
+                <svg class="save-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
+                </svg>
+                }
+            </button>
+        </div>
         <div class="profile-header">
             <div class="profile-avatar">
                 @if (user()?.profileImage) {
@@ -81,6 +97,79 @@
                 }
             </div>
         </div>
+    </div>
+
+    <!-- Feedback Section -->
+    <div class="feedback-section">
+        <div class="feedback-header">
+            <h2 class="feedback-title">Reviews & Feedback</h2>
+            <div class="feedback-stats">
+                <div class="average-rating">
+                    <span class="rating-number">{{ getAverageRating() }}</span>
+                    <div class="rating-stars">
+                        @for (star of getStarArray(getAverageRating()); track $index) {
+                        <svg class="star" [class.filled]="star" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                        }
+                    </div>
+                    <span class="total-reviews">({{ mockFeedbacks.length }} reviews)</span>
+                </div>
+                <button class="give-feedback-btn" (click)="onGiveFeedback()">
+                    <svg class="feedback-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+                    </svg>
+                    Give Feedback
+                </button>
+            </div>
+        </div>
+
+        <div class="feedback-list">
+            @for (feedback of mockFeedbacks; track feedback._id) {
+            <div class="feedback-card">
+                <div class="feedback-header-card">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar">
+                            @if (feedback.fromUser.profileImage) {
+                            <img [src]="feedback.fromUser.profileImage" [alt]="feedback.fromUser.username">
+                            } @else {
+                            <span>{{ getInitials(feedback.fromUser.username) }}</span>
+                            }
+                        </div>
+                        <div class="reviewer-details">
+                            <h4 class="reviewer-name">{{ feedback.fromUser.username }}</h4>
+                            <div class="review-date">{{ formatDate(feedback.createdAt) }}</div>
+                        </div>
+                    </div>
+                    <div class="feedback-rating">
+                        @for (star of getStarArray(feedback.rating); track $index) {
+                        <svg class="star" [class.filled]="star" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                        }
+                    </div>
+                </div>
+                <p class="feedback-comment">{{ feedback.comment }}</p>
+            </div>
+            }
+        </div>
+
+        @if (mockFeedbacks.length === 0) {
+        <div class="no-feedback">
+            <svg class="no-feedback-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+            </svg>
+            <h3>No reviews yet</h3>
+            <p>Be the first to give feedback to this developer!</p>
+            <button class="give-feedback-btn primary" (click)="onGiveFeedback()">
+                Give First Review
+            </button>
+        </div>
+        }
     </div>
 </div>
 } @else {

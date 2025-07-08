@@ -11,7 +11,7 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<User[]>{
+  getAll(): Observable<User[]> {
     return this.http.get<User[]>(`${environment.apiUrl}/users`);
   }
 
@@ -25,12 +25,11 @@ export class UserService {
     });
   };
 
-  starUser(id: string | null) {
-    this.http.post(`${environment.apiUrl}/profile/${id}/star`, {}, {
-      withCredentials: true
+  saveUser(devId: string | null, userId: string | null) {
+    this.http.get(`${environment.apiUrl}/profile/${devId}/${userId}/save`, {
     }).subscribe({
-      next: res => console.log('Star successful', res),
-      error: err => console.error('Star failed:', err)
+      next: res => console.log('Save successful', res),
+      error: err => console.error('Save failed:', err)
     });
   }
 }
