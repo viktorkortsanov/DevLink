@@ -3,6 +3,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { Project } from '../../types/project';
 import { ProjectService } from '../project.service';
+import { FirebaseStorageService } from '../../services/firebase.service';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { storage } from '../../../config/firebase.config';
 
 @Component({
   selector: 'app-edit-project',
@@ -15,8 +18,11 @@ export class EditProjectComponent implements OnInit {
   projectForm: FormGroup;
   errorMessage = signal<string>('');
   isLoading = signal<boolean>(false);
+  isImageUploading = signal<boolean>(false);
   logoPreviewUrl = signal<string>('');
+  selectedFile: File | null = null;
   projectId: string | null = null;
+  currentProject: Project | null = null;
 
   projectTypes = [
     { value: 'front-end', label: 'Front-End' },
@@ -43,7 +49,8 @@ export class EditProjectComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private firebaseStorageService: FirebaseStorageService
   ) {
     this.projectForm = this.fb.group({
       title: ['', [
@@ -92,6 +99,7 @@ export class EditProjectComponent implements OnInit {
 
     this.projectService.getDetails(this.projectId).subscribe({
       next: (project) => {
+        this.currentProject = project;
         this.populateForm(project);
       },
       error: (error) => {
@@ -99,7 +107,6 @@ export class EditProjectComponent implements OnInit {
         this.errorMessage.set('Failed to load project data');
       }
     });
-
   }
 
   populateForm(project: Project): void {
@@ -120,26 +127,50 @@ export class EditProjectComponent implements OnInit {
     }
   }
 
-  onLogoUrlChange(): void {
-    const logoUrl = this.projectForm.get('projectLogo')?.value;
-    if (logoUrl && this.isValidImageUrl(logoUrl)) {
-      this.logoPreviewUrl.set(logoUrl);
-    } else {
-      this.logoPreviewUrl.set('');
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      const validation = this.firebaseStorageService.validateFile(file);
+      if (!validation.isValid) {
+        this.errorMessage.set(validation.error || 'Invalid file');
+        return;
+      }
+
+      this.selectedFile = file;
+      this.errorMessage.set('');
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.logoPreviewUrl.set(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  onLogoError(): void {
+  onRemoveImage(): void {
+    this.selectedFile = null;
     this.logoPreviewUrl.set('');
+
+    if (this.currentProject?.projectLogo) {
+      this.logoPreviewUrl.set(this.currentProject.projectLogo);
+    }
+
+    const fileInput = document.getElementById('projectLogoFile') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 
   getLogoFilename(): string {
-    const logoUrl = this.projectForm.get('projectLogo')?.value;
-    if (logoUrl && this.logoPreviewUrl()) {
-      const filename = logoUrl.substring(logoUrl.lastIndexOf('/') + 1);
-      return `Preview: ${filename}`;
+    if (this.selectedFile) {
+      return `Selected: ${this.selectedFile.name}`;
     }
-    return 'No logo uploaded';
+    if (this.currentProject?.projectLogo && this.logoPreviewUrl()) {
+      return 'Current project logo';
+    }
+    return 'No logo selected';
   }
 
   isFieldInvalid(fieldName: string): boolean {
@@ -180,7 +211,7 @@ export class EditProjectComponent implements OnInit {
     return 'Invalid input';
   }
 
-  onUpdateProject(): void {
+  async onUpdateProject(): Promise<void> {
     this.errorMessage.set('');
 
     if (!this.projectForm.valid) {
@@ -191,37 +222,94 @@ export class EditProjectComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    const projectData = {
-      title: this.projectForm.value.title,
-      projectLogo: this.projectForm.value.projectLogo,
-      shortDescription: this.projectForm.value.shortDescription,
-      fullDescription: this.projectForm.value.fullDescription,
-      requirements: this.projectForm.value.requirements,
-      projectType: this.projectForm.value.projectType,
-      experienceLevel: this.projectForm.value.experienceLevel,
-      workType: this.projectForm.value.workType,
-      techStack: this.projectForm.value.techStack
-    };
+    try {
+      let projectLogoUrl = this.projectForm.value.projectLogo;
 
-    this.projectService.updateProject(this.projectId, projectData).subscribe({
-      next: (response) => {
-        this.isLoading.set(false);
-        this.router.navigate(['/projects', this.projectId, 'details']);
-      },
-      error: (err) => {
-        this.isLoading.set(false);
-        this.errorMessage.set(err.error?.message || 'Update failed');
+      if (this.selectedFile) {
+        this.isImageUploading.set(true);
+
+        if (this.currentProject?.projectLogo) {
+          await this.deleteProjectImage(this.currentProject.projectLogo);
+        }
+
+        projectLogoUrl = await this.uploadProjectImage(this.selectedFile);
+        this.isImageUploading.set(false);
       }
-    });
+
+      const projectData = {
+        title: this.projectForm.value.title,
+        projectLogo: projectLogoUrl,
+        shortDescription: this.projectForm.value.shortDescription,
+        fullDescription: this.projectForm.value.fullDescription,
+        requirements: this.projectForm.value.requirements,
+        projectType: this.projectForm.value.projectType,
+        experienceLevel: this.projectForm.value.experienceLevel,
+        workType: this.projectForm.value.workType,
+        techStack: this.projectForm.value.techStack
+      };
+
+      this.projectService.updateProject(this.projectId, projectData).subscribe({
+        next: (response) => {
+          this.isLoading.set(false);
+          this.router.navigate(['/projects', this.projectId, 'details']);
+        },
+        error: (err) => {
+          this.isLoading.set(false);
+          this.errorMessage.set(err.error?.message || 'Update failed');
+        }
+      });
+
+    } catch (error) {
+      this.isLoading.set(false);
+      this.isImageUploading.set(false);
+      this.errorMessage.set('Failed to upload image. Please try again.');
+      console.error('Error updating project:', error);
+    }
+  }
+
+  private async uploadProjectImage(file: File): Promise<string> {
+    const fileName = `projectImages/${Date.now()}_${file.name}`;
+    const fileRef = ref(storage, fileName);
+    const snapshot = await uploadBytes(fileRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    return downloadURL;
+  }
+
+  private async deleteProjectImage(imageUrl: string): Promise<void> {
+    try {
+      const fileName = this.extractFileNameFromURL(imageUrl);
+      if (fileName) {
+        const fileRef = ref(storage, fileName);
+        await deleteObject(fileRef);
+      }
+    } catch (error) {
+      console.error('Error deleting old project logo:', error);
+    }
+  }
+
+  private extractFileNameFromURL(url: string): string | null {
+    try {
+      const urlObj = new URL(url);
+      const pathname = urlObj.pathname;
+      const match = pathname.match(/\/o\/(.+?)$/);
+      if (match) {
+        return decodeURIComponent(match[1]);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error extracting filename:', error);
+      return null;
+    }
   }
 
   onCancel(): void {
-    if (this.projectForm.dirty) {
+    if (this.projectForm.dirty || this.selectedFile) {
       if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
         this.router.navigate(['/projects', this.projectId, 'details']);
       }
     } else {
-      this.router.navigate(['/projects', this.projectId,'details']);
+      this.router.navigate(['/projects', this.projectId, 'details']);
     }
   }
 
@@ -232,14 +320,5 @@ export class EditProjectComponent implements OnInit {
         control.markAsTouched();
       }
     });
-  }
-
-  private isValidImageUrl(url: string): boolean {
-    try {
-      const urlObj = new URL(url);
-      return /\.(jpg|jpeg|png|gif|svg|webp)(\?.*)?$/i.test(urlObj.pathname);
-    } catch (_) {
-      return false;
-    }
   }
 }
