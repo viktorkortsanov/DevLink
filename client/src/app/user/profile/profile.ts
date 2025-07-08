@@ -6,11 +6,12 @@ import { UserService } from '../user.service';
 import { User } from '../../types/user';
 import { ProjectService } from '../../projects/project.service';
 import { ProjectCardComponent } from '../../projects/project-card/project-card';
+import { DeveloperCardComponent } from '../../developers-container/developer-card/developer-card';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [RouterLink, CapitalizePipe, ProjectCardComponent],
+  imports: [RouterLink, CapitalizePipe, ProjectCardComponent, DeveloperCardComponent],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
@@ -21,6 +22,7 @@ export class ProfileComponent implements OnInit {
   appliedProjects = signal<any[]>([]);
   savedProjects = signal<any[]>([]);
   postedProjects = signal<any[]>([]);
+  savedDevelopers = signal<User[]>([]);
 
   isLoadingFirst = signal<boolean>(false);
   isLoadingSecond = signal<boolean>(false);
@@ -97,6 +99,7 @@ export class ProfileComponent implements OnInit {
     this.isLoadingSecond.set(true);
 
     if (this.isDeveloper()) {
+      // Load saved projects for developer
       this.projectService.getAll().subscribe({
         next: (projects) => {
           const saved = projects.filter(p =>
@@ -111,8 +114,8 @@ export class ProfileComponent implements OnInit {
           this.isLoadingSecond.set(false);
         }
       });
-
     } else {
+      // For employer, just set loading to false since we already have the IDs
       this.isLoadingSecond.set(false);
     }
   }
@@ -120,9 +123,14 @@ export class ProfileComponent implements OnInit {
   switchTab(tab: 'first' | 'second'): void {
     this.activeTab.set(tab);
 
-    if (tab === 'second' && this.isDeveloper() && this.savedProjects().length === 0) {
+    if (tab === 'second') {
       const userId = this.route.snapshot.paramMap.get('userId');
-      this.loadSecondTabData(userId);
+      
+      if (this.isDeveloper() && this.savedProjects().length === 0) {
+        this.loadSecondTabData(userId);
+      } else if (this.isEmployer() && this.savedDevelopers().length === 0) {
+        this.loadSecondTabData(userId);
+      }
     }
   }
 
@@ -166,6 +174,6 @@ export class ProfileComponent implements OnInit {
   }
 
   getSecondTabEmptyMessage(): string {
-    return this.isDeveloper() ? 'No saved projects yet' : 'Analytics coming soon';
+    return this.isDeveloper() ? 'No saved projects yet' : 'No saved developers yet';
   }
 }

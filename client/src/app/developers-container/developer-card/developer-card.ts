@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../../types/user';
+import { UserService } from '../../user/user.service';
 
 @Component({
   selector: 'app-developer-card',
@@ -8,14 +9,34 @@ import { User } from '../../types/user';
   templateUrl: './developer-card.html',
   styleUrls: ['./developer-card.css']
 })
-export class DeveloperCardComponent {
-  @Input() developer!: User;
+export class DeveloperCardComponent implements OnInit {
+  @Input() developerId?: string;
+  @Input() developer?: User;
 
-  constructor(private router: Router) {}
+  ngOnInit(): void {
+    if (this.developerId && !this.developer) {
+      this.loadDeveloper();
+    }
+  }
+
+  loadDeveloper(): void {
+    if (this.developerId) {
+      this.userService.getUserInfo(this.developerId).subscribe({
+        next: (user) => {
+          this.developer = user;
+        },
+        error: (error) => {
+          console.error('Error loading developer:', error);
+        }
+      });
+    }
+  }
+
+  constructor(private router: Router, private userService: UserService) { }
 
   getInitials(): string {
     if (!this.developer?.username) return 'U';
-    
+
     return this.developer.username
       .split(' ')
       .map(word => word.charAt(0))
@@ -26,7 +47,7 @@ export class DeveloperCardComponent {
 
   getSkillsArray(): string[] {
     if (!this.developer?.techStack) return [];
-    
+
     return this.developer.techStack
       .split(',')
       .map(skill => skill.trim())
@@ -41,6 +62,6 @@ export class DeveloperCardComponent {
     if (event) {
       event.stopPropagation();
     }
-    this.router.navigate(['/profile', this.developer._id, 'info']);
+    this.router.navigate(['/profile', this.developer?._id, 'info']);
   }
 }

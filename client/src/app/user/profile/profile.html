@@ -114,7 +114,12 @@
                 @if (activeTab() === 'first') {
                 @if (isDeveloper()) {
                 <!-- Applied Projects for Developer -->
-                @if (appliedProjects().length === 0) {
+                @if (isLoadingFirst()) {
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading applied projects...</p>
+                </div>
+                } @else if (appliedProjects().length === 0) {
                 <div class="empty-state">
                     <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -130,7 +135,12 @@
                 }
                 } @else {
                 <!-- Posted Projects for Employer -->
-                @if (postedProjects().length === 0) {
+                @if (isLoadingFirst()) {
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading posted projects...</p>
+                </div>
+                } @else if (postedProjects().length === 0) {
                 <div class="empty-state">
                     <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
@@ -150,7 +160,12 @@
                 @if (activeTab() === 'second') {
                 @if (isDeveloper()) {
                 <!-- Saved Projects for Developer -->
-                @if (savedProjects().length === 0) {
+                @if (isLoadingSecond()) {
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading saved projects...</p>
+                </div>
+                } @else if (savedProjects().length === 0) {
                 <div class="empty-state">
                     <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M5 6a2 2 0 012-2h6a2 2 0 012 2v14l-5-3-5 3V6z" />
@@ -165,27 +180,28 @@
                 </div>
                 }
                 } @else {
-                <!-- Saved Developers for Employer
-                @if (savedDevelopers().length === 0) {
+                <!-- Saved Developers for Employer -->
+                @if (isLoadingSecond()) {
+                <div class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading saved developers...</p>
+                </div>
+                } @else if (!user?.savedDevelopers || user?.savedDevelopers?.length === 0) {
                 <div class="empty-state">
                     <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                     <p>{{ getSecondTabEmptyMessage() }}</p>
-                </div> -->
-                <!-- } @else { -->
+                </div>
+                } @else {
                 <div class="developers-grid">
-                    <!-- @for (developer of savedDevelopers(); track developer._id) { -->
-                    <!-- TODO: Create developer card component -->
-                    <!-- <div class="developer-card">
-                        <h4>{{ developer.username }}</h4>
-                        <p>{{ developer.bio }}</p>
-                    </div> -->
-                    <!-- } -->
+                    @for (developerId of user?.savedDevelopers || []; track developerId) {
+                    <app-developer-card [developerId]="developerId" />
+                    }
                 </div>
                 }
                 }
-                <!-- } -->
+                }
             </div>
         </div>
     </div>
