@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../user.service';
 import { CapitalizePipe } from '../../shared/pipes/capitalize-pipe';
 import { AuthService } from '../auth.service';
-import { User } from '../../types/user';
+import { User, Review } from '../../types/user';
 
 @Component({
   selector: 'app-user-info',
@@ -20,41 +20,7 @@ export class UserInfoComponent implements OnInit {
   currentUser = computed(() => this.authService.currentUser());
   userInfo: User | null = null;
 
-  mockFeedbacks = [
-    {
-      _id: '1',
-      rating: 5,
-      comment: 'Excellent developer! Very professional and delivered high-quality work on time.',
-      fromUser: {
-        _id: '1',
-        username: 'John Smith',
-        profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
-      },
-      createdAt: '2024-01-15T10:30:00Z'
-    },
-    {
-      _id: '2',
-      rating: 4,
-      comment: 'Great communication skills and solid technical knowledge. Would work with again.',
-      fromUser: {
-        _id: '2',
-        username: 'Sarah Wilson',
-        profileImage: ''
-      },
-      createdAt: '2024-01-10T14:20:00Z'
-    },
-    {
-      _id: '3',
-      rating: 5,
-      comment: 'Outstanding work! Very creative solutions and attention to detail.',
-      fromUser: {
-        _id: '3',
-        username: 'Mike Johnson',
-        profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
-      },
-      createdAt: '2024-01-05T09:15:00Z'
-    }
-  ];
+  // Removed mock data - using real reviews from user object
 
   constructor(
     private route: ActivatedRoute,
@@ -116,8 +82,12 @@ export class UserInfoComponent implements OnInit {
   // Removed onGiveFeedback method - now using routerLink
 
   getAverageRating(): number {
-    // Mock average rating за UI
-    return 4.7;
+    const reviews = this.userReviews;
+    if (reviews.length === 0) return 0;
+    
+    const totalStars = reviews.reduce((sum: number, review: Review) => sum + review.stars, 0);
+    const average = totalStars / reviews.length;
+    return Math.round(average * 10) / 10; // Round to 1 decimal place
   }
 
   getStarArray(rating: number): boolean[] {
@@ -169,6 +139,23 @@ export class UserInfoComponent implements OnInit {
 
   onTechIconError(event: any): void {
     event.target.style.display = 'none';
+  }
+
+  // Helper methods for reviews
+  get userReviews(): Review[] {
+    const reviews = this.user()?.reviews;
+    return Array.isArray(reviews) ? reviews : [];
+  }
+
+  get hasReviews(): boolean {
+    return this.userReviews.length > 0;
+  }
+
+  getOwnerInfo(review: Review): {username: string, profileImage?: string} | null {
+    if (typeof review.owner === 'object' && review.owner !== null) {
+      return review.owner;  // Populated данни
+    }
+    return null;  // Само ID - няма данни
   }
 
   // Helper method to check if current user can give feedback

@@ -28,37 +28,37 @@ userController.get('/users/:userId', async (req, res) => {
     res.json(userInfo);
 });
 
-userController.post('/profile/:userId/star', async (req,res) => {
+userController.post('/profile/:userId/star', async (req, res) => {
     try {
-    const targetUserId = req.params.userId;
-    const likerUserId = req.user._id;
-    await userService.starUser(targetUserId, likerUserId);
-    res.status(200)
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+        const targetUserId = req.params.userId;
+        const likerUserId = req.user._id;
+        await userService.starUser(targetUserId, likerUserId);
+        res.status(200)
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 });
 
-userController.get('/peojects/:projectId/:userId/save', async (req,res) => {
+userController.get('/peojects/:projectId/:userId/save', async (req, res) => {
     try {
-    const projectId = req.params.projectId;
-    const userId = req.params.userId;
-    await userService.saveProject(userId, projectId);
-    res.status(200)
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+        const projectId = req.params.projectId;
+        const userId = req.params.userId;
+        await userService.saveProject(userId, projectId);
+        res.status(200)
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 });
 
-userController.get('/peojects/:projectId/:userId/save', async (req,res) => {
+userController.get('/peojects/:projectId/:userId/save', async (req, res) => {
     try {
-    const projectId = req.params.projectId;
-    const userId = req.params.userId;
-    await userService.saveProject(userId, projectId);
-    res.status(200)
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+        const projectId = req.params.projectId;
+        const userId = req.params.userId;
+        await userService.saveProject(userId, projectId);
+        res.status(200)
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
 });
 
 userController.get('/profile/:devId/:userId/save', async (req, res) => {
@@ -70,6 +70,23 @@ userController.get('/profile/:devId/:userId/save', async (req, res) => {
         res.status(200).json({ message: 'Developer save successfully.' });
     } catch (err) {
         res.status(500).json({ error: 'Failed to save this developer.' });
+    }
+});
+
+userController.post('/users/:devId/:userId/reviews', async (req, res) => {
+    const devId = req.params.devId;
+    const userId = req.params.userId;
+    const { content, stars } = req.body;
+
+    try {
+        const updatedUser = await userService.postReview(devId, userId, content, stars);
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json({ message: 'Review added successfully.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to add review.' });
     }
 });
 

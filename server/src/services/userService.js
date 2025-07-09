@@ -5,7 +5,7 @@ const userService = {
         return User.find();
     },
     getOne(userId) {
-        return User.findById(userId);
+        return User.findById(userId).populate('reviews.owner', 'username profileImage').exec();
     },
     updateUser(userId, updateData) {
         return User.findByIdAndUpdate(
@@ -32,6 +32,7 @@ const userService = {
             return User.findByIdAndUpdate(targetUserId, { $pull: { savedProjects: projectId } });
         }
     },
+
     async saveDeveloper(userId, devId) {
         const user = await User.findById(userId);
 
@@ -41,16 +42,10 @@ const userService = {
             return User.findByIdAndUpdate(userId, { $pull: { savedDevelopers: devId } });
         }
     },
-    updateProfileImage: async (userId, profileImage) => {
-        const user = await User.findById(userId);
-        if (!user) throw new Error('User not found');
 
-        user.profileImage = profileImage;
-
-        await user.save();
-
-        return user;
-    }
+    postReview(devId, userId, content, stars) {
+        return User.findByIdAndUpdate(devId, { $push: { reviews: { owner: userId, content, stars } } },)
+    },
 };
 
 export default userService;

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../user/auth.service';
+import { UserService } from '../../user/user.service';
 
 @Component({
   selector: 'app-review-form',
@@ -14,23 +15,24 @@ import { AuthService } from '../../user/auth.service';
 export class ReviewFormComponent implements OnInit {
   currentUser = computed(() => this.authService.currentUser());
   targetUserId: string | null = null;
-  
+
   rating = signal<number>(0);
   comment = signal<string>('');
   isSubmitting = signal<boolean>(false);
-  
+
   readonly maxCommentLength = 500;
   readonly minCommentLength = 10;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
-  ) {}
+    private authService: AuthService,
+    private userService: UserService
+  ) { }
 
   ngOnInit(): void {
     this.targetUserId = this.route.snapshot.paramMap.get('userId');
-    
+
     if (!this.currentUser()) {
       this.router.navigate(['/login']);
       return;
@@ -53,35 +55,31 @@ export class ReviewFormComponent implements OnInit {
 
     this.isSubmitting.set(true);
 
-    // Review data according to your model structure
     const reviewData = {
-      owner: this.currentUser()?._id,  // The user giving the review
-      content: this.comment().trim(),  // Review content
-      stars: this.rating()             // Rating 1-5
-      // createdAt will be set automatically by backend
+      owner: this.currentUser()?._id,
+      content: this.comment().trim(),
+      stars: this.rating()
     };
 
-    console.log('Review to submit for user:', this.targetUserId);
-    console.log('Review data:', reviewData);
+    const userId = this.currentUser()?._id;
 
-    // TODO: Replace with actual API call
-    // Example: this.userService.submitReview(this.targetUserId, reviewData)
-    
-    // Simulate API call
-    setTimeout(() => {
-      this.isSubmitting.set(false);
-      this.router.navigate(['/user', this.targetUserId]);
-    }, 1000);
+    if (!this.targetUserId || !userId) {
+      return;
+    }
+
+    this.userService.submitReview(this.targetUserId, userId, reviewData);
+    this.isSubmitting.set(false);
+    this.router.navigate(['/profile', this.targetUserId, 'info']);
   }
 
   onCancel(): void {
-    this.router.navigate(['/user', this.targetUserId]);
+    this.router.navigate(['/profile', this.targetUserId, 'info']);
   }
 
   isValidForm(): boolean {
-    return this.rating() > 0 && 
-           this.comment().trim().length >= this.minCommentLength &&
-           this.comment().trim().length <= this.maxCommentLength;
+    return this.rating() > 0 &&
+      this.comment().trim().length >= this.minCommentLength &&
+      this.comment().trim().length <= this.maxCommentLength;
   }
 
   get commentLength(): number {

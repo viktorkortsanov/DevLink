@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { User } from '../types/user';
+import { Review, User } from '../types/user';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -31,5 +31,9 @@ export class UserService {
       next: res => console.log('Save successful', res),
       error: err => console.error('Save failed:', err)
     });
+  };
+
+  submitReview(targetUserId: string | undefined, userId: string | undefined, reviewData: Review) {
+    return this.http.post(`${environment.apiUrl}/users/${targetUserId}/${userId}/reviews`, reviewData).subscribe();
   }
 }

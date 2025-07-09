@@ -86,8 +86,7 @@ projectController.get('/projects/:projectId/:userId/apply', async (req, res) => 
 projectController.get('/projects/:projectId/:userId/save', async (req, res) => {
     const userId = req.params.userId;
     const projectId = req.params.projectId;
-    console.log(userId);
-    
+
     try {
         const isOwner = await isProjectOwner(projectId, userId);
         if (isOwner) {
