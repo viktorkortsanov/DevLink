@@ -7,7 +7,6 @@
 <div class="user-info-container">
     <div class="profile-card">
         <!-- Save Button inside profile card -->
-        <!-- Save Button inside profile card -->
         <div class="save-button-container">
             <button class="save-btn" (click)="onSaveUser()" title="Add to Favorites">
                 @if (isSaved()) {
@@ -116,13 +115,17 @@
                     </div>
                     <span class="total-reviews">({{ mockFeedbacks.length }} reviews)</span>
                 </div>
-                <button class="give-feedback-btn" (click)="onGiveFeedback()">
+                
+                <!-- Updated Give Feedback button with routerLink -->
+                @if (canGiveFeedback) {
+                <a [routerLink]="['/developers', userId, 'review']" class="give-feedback-btn">
                     <svg class="feedback-icon" fill="currentColor" viewBox="0 0 24 24">
                         <path
                             d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
                     </svg>
                     Give Feedback
-                </button>
+                </a>
+                }
             </div>
         </div>
 
@@ -165,9 +168,12 @@
             </svg>
             <h3>No reviews yet</h3>
             <p>Be the first to give feedback to this developer!</p>
-            <button class="give-feedback-btn primary" (click)="onGiveFeedback()">
+            
+            @if (canGiveFeedback) {
+            <a [routerLink]="['/review', userId]" class="give-feedback-btn primary">
                 Give First Review
-            </button>
+            </a>
+            }
         </div>
         }
     </div>

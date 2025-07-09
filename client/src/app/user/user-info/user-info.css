@@ -330,6 +330,7 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
+    text-decoration: none;
 }
 
 .give-feedback-btn:hover {

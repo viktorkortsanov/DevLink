@@ -1,0 +1,85 @@
+<div class="container">
+  <div class="review-form-card">
+    <!-- Header like Facebook comment -->
+    <div class="form-header">
+      <div class="user-avatar">
+        @if (currentUser()?.profileImage) {
+          <img [src]="currentUser()?.profileImage" [alt]="currentUser()?.username" />
+        } @else {
+          <span>{{ getInitials(currentUser()?.username || 'User') }}</span>
+        }
+      </div>
+      <div class="user-info">
+        <div class="user-name">{{ currentUser()?.username || 'User' }}</div>
+        <div class="form-subtitle">Writing a review</div>
+      </div>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      <!-- Rating in horizontal layout -->
+      <div class="rating-section">
+        <span class="rating-label">Rating:</span>
+        <div class="rating-stars">
+          @for (star of starArray; track star) {
+            <svg 
+              class="star" 
+              [class.filled]="star <= rating()"
+              fill="currentColor" 
+              viewBox="0 0 24 24"
+              (click)="onRatingChange(star)"
+              (mouseenter)="onRatingChange(star)"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          }
+        </div>
+        <span class="rating-text">{{ rating() }}/5</span>
+      </div>
+
+      <!-- Comment section -->
+      <div class="comment-section">
+        <textarea 
+          class="comment-textarea"
+          [class.error]="!isCommentValid && commentLength > 0"
+          placeholder="Write your review..."
+          maxlength="500"
+          [value]="comment()"
+          (input)="onCommentChange($event)"
+        ></textarea>
+        
+        <div class="comment-footer">
+          @if (!isCommentValid && commentLength > 0) {
+            <div class="error-message">Please write at least {{ minCommentLength }} characters</div>
+          }
+          <div class="char-count" [class.error]="!isCommentValid && commentLength > 0">
+            {{ commentLength }} / {{ maxCommentLength }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">
+          Cancel
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="!isValidForm() || isSubmitting()"
+        >
+          @if (isSubmitting()) {
+            <svg class="btn-icon spinning" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            </svg>
+            Posting...
+          } @else {
+            <svg class="btn-icon" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+            Post Review
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

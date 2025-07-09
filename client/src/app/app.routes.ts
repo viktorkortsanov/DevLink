@@ -10,6 +10,7 @@ import { ProjectDetailsComponent } from './projects/project-details/project-deta
 import { EditProjectComponent } from './projects/edit-project/edit-project';
 import { UserInfoComponent } from './user/user-info/user-info';
 import { DevelopersContainerComponent } from './developers-container/developers-container';
+import { ReviewFormComponent } from './developers-container/review-form/review-form';
 
 export const routes: Routes = [
     { path: '', component: Main },
@@ -23,4 +24,5 @@ export const routes: Routes = [
     { path: 'projects/:projectId/details', component: ProjectDetailsComponent },
     { path: 'projects/:projectId/edit', component: EditProjectComponent },
     { path: 'developers', component: DevelopersContainerComponent },
+    { path: 'developers/:userId/review', component: ReviewFormComponent },
 ];

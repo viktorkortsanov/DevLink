@@ -62,6 +62,30 @@ const userSchema = new Schema({
         default: null,
     },
 
+    reviews: [{
+        owner: {
+            type: Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        content: {
+            type: String,
+            required: true,
+            minLength: 2,
+            maxLength: 500,
+        },
+        stars: {
+            type: Number,
+            required: true,
+            min: 1,
+            max: 5,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+
     location: {
         type: String,
         default: null,

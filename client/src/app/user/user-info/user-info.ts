@@ -1,5 +1,5 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../user.service';
 import { CapitalizePipe } from '../../shared/pipes/capitalize-pipe';
 import { AuthService } from '../auth.service';
@@ -8,7 +8,7 @@ import { User } from '../../types/user';
 @Component({
   selector: 'app-user-info',
   standalone: true,
-  imports: [CapitalizePipe],
+  imports: [CapitalizePipe, RouterLink],
   templateUrl: './user-info.html',
   styleUrls: ['./user-info.css']
 })
@@ -86,7 +86,6 @@ export class UserInfoComponent implements OnInit {
     });
   }
 
-
   loadUserInfo(): void {
     if (!this.userId) return;
 
@@ -114,9 +113,7 @@ export class UserInfoComponent implements OnInit {
     this.userService.saveUser(this.userId, this.userInfo._id);
   }
 
-  onGiveFeedback(): void {
-    console.log('Give feedback clicked');
-  }
+  // Removed onGiveFeedback method - now using routerLink
 
   getAverageRating(): number {
     // Mock average rating за UI
@@ -172,5 +169,11 @@ export class UserInfoComponent implements OnInit {
 
   onTechIconError(event: any): void {
     event.target.style.display = 'none';
+  }
+
+  // Helper method to check if current user can give feedback
+  get canGiveFeedback(): boolean {
+    const currentUserId = this.currentUser()?._id;
+    return !!currentUserId && currentUserId !== this.userId;
   }
 }
