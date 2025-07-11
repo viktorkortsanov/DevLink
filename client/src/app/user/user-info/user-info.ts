@@ -20,6 +20,13 @@ export class UserInfoComponent implements OnInit {
   currentUser = computed(() => this.authService.currentUser());
   userInfo: User | null = null;
 
+  // Infinite scroll properties
+  displayedReviews = signal<Review[]>([]);
+  reviewsPerPage = 3;
+  currentPage = signal<number>(0);
+  isLoadingMore = signal<boolean>(false);
+  hasMoreReviews = signal<boolean>(true);
+
   // Removed mock data - using real reviews from user object
 
   constructor(
@@ -60,6 +67,7 @@ export class UserInfoComponent implements OnInit {
     this.userService.getUserInfo(this.userId).subscribe({
       next: (user) => {
         this.user.set(user);
+        this.initializeReviews();
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -149,6 +157,44 @@ export class UserInfoComponent implements OnInit {
 
   get hasReviews(): boolean {
     return this.userReviews.length > 0;
+  }
+
+  // Infinite scroll methods
+  initializeReviews(): void {
+    const reviews = this.userReviews;
+    this.currentPage.set(0);
+    this.displayedReviews.set(reviews.slice(0, this.reviewsPerPage));
+    this.hasMoreReviews.set(reviews.length > this.reviewsPerPage);
+  }
+
+  loadMoreReviews(): void {
+    if (this.isLoadingMore() || !this.hasMoreReviews()) return;
+
+    this.isLoadingMore.set(true);
+
+    // Simulate loading delay (remove in production)
+    setTimeout(() => {
+      const allReviews = this.userReviews;
+      const nextPage = this.currentPage() + 1;
+      const startIndex = nextPage * this.reviewsPerPage;
+      const endIndex = startIndex + this.reviewsPerPage;
+      
+      const newReviews = allReviews.slice(startIndex, endIndex);
+      
+      if (newReviews.length > 0) {
+        const currentDisplayed = this.displayedReviews();
+        this.displayedReviews.set([...currentDisplayed, ...newReviews]);
+        this.currentPage.set(nextPage);
+      }
+      
+      // Check if there are more reviews
+      this.hasMoreReviews.set(endIndex < allReviews.length);
+      this.isLoadingMore.set(false);
+    }, 500);
+  }
+
+  onScrollEnd(): void {
+    this.loadMoreReviews();
   }
 
   getOwnerInfo(review: Review): {username: string, profileImage?: string} | null {

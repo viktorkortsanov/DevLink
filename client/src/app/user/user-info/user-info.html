@@ -118,7 +118,7 @@
                 
                 <!-- Updated Give Feedback button with routerLink -->
                 @if (canGiveFeedback) {
-                <a [routerLink]="['/developers', userId, 'review']" class="give-feedback-btn">
+                <a [routerLink]="['/review', userId]" class="give-feedback-btn">
                     <svg class="feedback-icon" fill="currentColor" viewBox="0 0 24 24">
                         <path
                             d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
@@ -129,8 +129,8 @@
             </div>
         </div>
 
-        <div class="feedback-list">
-            @for (review of userReviews; track $index) {
+        <div class="feedback-list" (scroll)="onScrollEnd()">
+            @for (review of displayedReviews(); track $index) {
             <div class="feedback-card">
                 <div class="feedback-header-card">
                     <div class="reviewer-info">
@@ -156,6 +156,26 @@
                     </div>
                 </div>
                 <p class="feedback-comment">{{ review.content }}</p>
+            </div>
+            }
+
+            <!-- Loading more indicator -->
+            @if (isLoadingMore()) {
+            <div class="loading-more">
+                <div class="loading-spinner-small"></div>
+                <span>Loading more reviews...</span>
+            </div>
+            }
+
+            <!-- Load more button (fallback for devices without scroll) -->
+            @if (hasMoreReviews() && !isLoadingMore()) {
+            <div class="load-more-container">
+                <button class="load-more-btn" (click)="loadMoreReviews()">
+                    <svg class="load-more-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    Load More Reviews
+                </button>
             </div>
             }
         </div>
