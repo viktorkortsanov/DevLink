@@ -1,5 +1,4 @@
 import { Component, signal, computed, OnInit } from '@angular/core';
-import { AuthService } from '../auth.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CapitalizePipe } from '../../shared/pipes/capitalize-pipe';
 import { UserService } from '../user.service';
@@ -28,15 +27,13 @@ export class ProfileComponent implements OnInit {
   isLoadingSecond = signal<boolean>(false);
 
   constructor(
-    private authService: AuthService,
     private userService: UserService,
     private projectService: ProjectService,
     private route: ActivatedRoute
   ) { }
 
-  currentUser = computed(() => this.authService.currentUser());
-  isDeveloper = computed(() => this.currentUser()?.role === 'developer');
-  isEmployer = computed(() => this.currentUser()?.role === 'employer');
+  isDeveloper = computed(() => this.user?.role === 'developer');
+  isEmployer = computed(() => this.user?.role === 'employer');
 
   ngOnInit(): void {
     const userId = this.route.snapshot.paramMap.get('userId');
@@ -63,7 +60,7 @@ export class ProfileComponent implements OnInit {
     this.isLoadingFirst.set(true);
 
     if (this.isDeveloper()) {
-      const userId = this.authService.currentUser()?._id;
+      const userId = this.user?._id;
 
       this.projectService.getAll().subscribe({
         next: (projects) => {

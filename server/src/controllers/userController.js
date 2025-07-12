@@ -22,6 +22,13 @@ userController.post('/edit-profile/:userId', async (req, res) => {
     res.json(updatedUser);
 });
 
+userController.post('/adminpanel/:userId/edit-user', async (req, res) => {
+    const userId = req.params.userId;
+    const updatedData = req.body;
+    const updatedUser = await userService.updateUser(userId, updatedData);
+    res.json(updatedUser);
+});
+
 userController.get('/users/:userId', async (req, res) => {
     const userId = req.params.userId;
     const userInfo = await userService.getOne(userId);

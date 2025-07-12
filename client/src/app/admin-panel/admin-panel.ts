@@ -1,13 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Route, RouterLink, RouterModule } from '@angular/router';
 import { User } from '../types/user';
 import { UserService } from '../user/user.service';
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, RouterLink],
   templateUrl: './admin-panel.html',
   styleUrls: ['./admin-panel.css']
 })
@@ -22,13 +22,21 @@ export class AdminPanelComponent implements OnInit {
   roleFilter = signal<string>('all');
   isLoadingUsers = signal<boolean>(false);
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    // TODO: Initialize component
-    if (this.activeSection() === 'users') {
-      this.loadUsers();
+    // Check fragment immediately
+    const currentFragment = this.route.snapshot.fragment;
+    if (currentFragment) {
+      this.onSectionChange(currentFragment);
     }
+
+    // Also subscribe for future changes
+    this.route.fragment.subscribe(fragment => {
+      if (fragment) {
+        this.onSectionChange(fragment);
+      }
+    });
   }
 
   onSectionChange(section: string): void {

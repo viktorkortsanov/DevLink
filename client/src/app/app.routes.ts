@@ -12,6 +12,7 @@ import { UserInfoComponent } from './user/user-info/user-info';
 import { DevelopersContainerComponent } from './developers-container/developers-container';
 import { ReviewFormComponent } from './developers-container/review-form/review-form';
 import { AdminPanelComponent } from './admin-panel/admin-panel';
+import { EditUserComponent } from './admin-panel/edit-user/edit-user';
 
 export const routes: Routes = [
     { path: '', component: Main },
@@ -27,4 +28,5 @@ export const routes: Routes = [
     { path: 'developers', component: DevelopersContainerComponent },
     { path: 'developers/:userId/review', component: ReviewFormComponent },
     { path: 'adminpanel', component: AdminPanelComponent },
+    { path: 'adminpanel/:userId/edit-user', component: EditUserComponent },
 ];
