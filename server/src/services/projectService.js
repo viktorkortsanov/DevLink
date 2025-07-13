@@ -3,7 +3,7 @@ import Project from "../models/project.js"
 const projectService = {
 
     getAll() {
-        return Project.find();
+        return Project.find().populate('owner', 'username profileImage').exec();;
     },
 
     getOne(projectId) {

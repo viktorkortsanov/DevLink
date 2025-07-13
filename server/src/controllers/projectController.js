@@ -6,7 +6,7 @@ const projectController = Router();
 
 projectController.get('/projects', async (req, res) => {
     try {
-        const projects = await projectService.getAll().lean();
+        const projects = await projectService.getAll();
         res.status(200).json(projects);
     } catch (err) {
         res.status(400).json(err.message);

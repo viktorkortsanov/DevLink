@@ -5,6 +5,7 @@ import { User } from '../types/user';
 import { UserService } from '../user/user.service';
 import { ConfirmDialogComponent } from '../dialog/dialog';
 import { AdminService } from './admin.service';
+import { ProjectService } from '../projects/project.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -26,7 +27,13 @@ export class AdminPanelComponent implements OnInit {
   showDeleteDialog = signal<boolean>(false);
   userToDelete = signal<string | null>(null);
 
-  constructor(private userService: UserService, private adminService: AdminService, private route: ActivatedRoute) { }
+  // Project Management
+  projects = signal<any[]>([]);
+  filteredProjects = signal<any[]>([]);
+  projectSearchTerm = signal<string>('');
+  isLoadingProjects = signal<boolean>(false);
+
+  constructor(private userService: UserService, private adminService: AdminService, private projectService: ProjectService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     const currentFragment = this.route.snapshot.fragment;
@@ -45,6 +52,8 @@ export class AdminPanelComponent implements OnInit {
     this.activeSection.set(section);
     if (section === 'users') {
       this.loadUsers();
+    } else if (section === 'projects') {
+      this.loadProjects();
     }
   }
 
@@ -146,6 +155,59 @@ export class AdminPanelComponent implements OnInit {
     this.userToDelete.set(null);
   }
 
+  ////// Project Management
+
+  loadProjects(): void {
+    this.isLoadingProjects.set(true);
+    this.projectService.getAll().subscribe({
+      next: (projects) => {
+        if (!projects) return;
+
+        this.projects.set(projects);
+        this.applyProjectFilters();
+      },
+      error: (error) => {
+        console.error('Failed to load projects:', error);
+      },
+      complete: () => {
+        this.isLoadingProjects.set(false);
+      }
+    });
+  }
+
+  onProjectSearchChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.projectSearchTerm.set(target.value);
+    this.applyProjectFilters();
+  }
+
+  applyProjectFilters(): void {
+    let filtered = this.projects();
+
+    if (this.projectSearchTerm()) {
+      const search = this.projectSearchTerm().toLowerCase();
+      filtered = filtered.filter(project =>
+        project.title.toLowerCase().includes(search) ||
+        project.owner?.username?.toLowerCase().includes(search)
+      );
+    }
+
+    this.filteredProjects.set(filtered);
+  }
+
+  getProjectInitials(title: string): string {
+    return title
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  }
+
+  onDeleteProject(projectId: string): void {
+    // TODO: Implement delete project with dialog
+    console.log('Delete project:', projectId);
+  }
 
   onFeatureProject(): void {
     // TODO: Feature/unfeature project
