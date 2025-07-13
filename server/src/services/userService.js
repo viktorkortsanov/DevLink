@@ -14,6 +14,11 @@ const userService = {
             { new: true }
         );
     },
+
+    delete(userId) {
+        return User.findByIdAndDelete(userId);
+    },
+
     async starUser(targetUserId, likerUserId) {
         const user = await User.findById(targetUserId);
 

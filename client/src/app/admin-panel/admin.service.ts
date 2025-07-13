@@ -15,4 +15,8 @@ export class AdminService {
       withCredentials: true
     });
   };
+
+  deleteUser(id: string | null) {
+    return this.http.get(`${environment.apiUrl}/adminpanel/usermanagement/${id}/delete`);
+  }
 }

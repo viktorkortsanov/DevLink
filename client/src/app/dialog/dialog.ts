@@ -1,6 +1,4 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { ProjectService } from '../projects/project.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-confirm-dialog',
@@ -15,27 +13,12 @@ export class ConfirmDialogComponent {
   @Input() confirmText: string = 'Confirm';
   @Input() cancelText: string = 'Cancel';
   @Input() isVisible: boolean = false;
-  @Input() projectId: string | undefined;
 
+  @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
-  constructor(private projectService: ProjectService, private router: Router) {}
-
   onConfirm(): void {
-    if (this.projectId) {
-      this.projectService.deleteProject(this.projectId).subscribe({
-        next: () => {
-          console.log('Project deleted successfully');
-          this.router.navigate(['/projects']);
-          this.cancel.emit();
-        },
-        error: (error) => {
-          console.error('Error deleting project:', error);
-        }
-      });
-      console.log('Deleting project with ID:', this.projectId);
-      this.cancel.emit();
-    }
+    this.confirm.emit();
   }
 
   onCancel(): void {

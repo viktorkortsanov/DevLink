@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { json, Router } from "express";
 import userService from "../services/userService.js";
 import User from "../models/user.js";
 
@@ -117,6 +117,19 @@ userController.put('/users/:userId/updateProfileImage', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+userController.get('/adminpanel/usermanagement/:userId/delete', async (req,res) => {
+    const userId = req.params.userId;
+    console.log(userId);
+    
+    try {
+        const user = await userService.delete(userId);
+        res.status(200).json(user);
+    }catch(err) {
+        console.error(err);
+        res.status(500),json({ message: 'Failed to delete user' });
+    }
+})
 
 
 userController.get('/users/:userId/profileImage', async (req, res) => {

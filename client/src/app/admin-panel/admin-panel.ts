@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Route, RouterLink, RouterModule } from '@angular/router';
 import { User } from '../types/user';
 import { UserService } from '../user/user.service';
+import { ConfirmDialogComponent } from '../dialog/dialog';
+import { AdminService } from './admin.service';
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink],
+  imports: [CommonModule, RouterModule, RouterLink, ConfirmDialogComponent],
   templateUrl: './admin-panel.html',
   styleUrls: ['./admin-panel.css']
 })
@@ -21,8 +23,10 @@ export class AdminPanelComponent implements OnInit {
   statusFilter = signal<string>('all');
   roleFilter = signal<string>('all');
   isLoadingUsers = signal<boolean>(false);
+  showDeleteDialog = signal<boolean>(false);
+  userToDelete = signal<string | null>(null);
 
-  constructor(private userService: UserService, private route: ActivatedRoute) { }
+  constructor(private userService: UserService, private adminService: AdminService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     // Check fragment immediately
@@ -128,8 +132,29 @@ export class AdminPanelComponent implements OnInit {
   }
 
   onDeleteUser(userId: string): void {
-    // TODO: Confirm and delete user
-    console.log('Delete user:', userId);
+    this.userToDelete.set(userId);
+    this.showDeleteDialog.set(true);
+  }
+
+  onConfirmDelete(): void {
+    const userId = this.userToDelete();
+    if (userId) {
+      this.adminService.deleteUser(userId).subscribe({
+        next: () => {
+          const updatedUsers = this.users.filter(user => user._id !== userId);
+          this.users = updatedUsers;
+          this.applyFilters();
+        },
+        error: (err) => console.error('Failed to delete user:', err)
+      });
+    }
+    this.showDeleteDialog.set(false);
+    this.userToDelete.set(null);
+  }
+
+  onCancelDelete(): void {
+    this.showDeleteDialog.set(false);
+    this.userToDelete.set(null);
   }
 
   // TODO: Implement these methods

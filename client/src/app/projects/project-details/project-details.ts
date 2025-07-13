@@ -1,5 +1,5 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Project } from '../../types/project';
 import { ProjectService } from '../project.service';
 import { CommonModule } from '@angular/common';
@@ -25,8 +25,9 @@ export class ProjectDetailsComponent implements OnInit {
   isApplied = signal<boolean>(false);
   isSaved = signal<boolean>(false);
   showApplicantsDialog = signal<boolean>(false);
+  projectToDelete = signal<string | null>(null);
 
-  constructor(private route: ActivatedRoute, private projectService: ProjectService, private authService: AuthService, private userService: UserService) { }
+  constructor(private route: ActivatedRoute, private projectService: ProjectService, private authService: AuthService, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
     const userId = this.currentUser()?._id;
@@ -158,8 +159,31 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  onDelete(): void {
+  onDelete(projectId: string): void {
+    this.projectToDelete.set(projectId);
     this.showDeleteDialog.set(true);
+  }
+
+  onConfirmDelete(): void {
+    const projectId = this.projectToDelete();
+    if (projectId) {
+      this.projectService.deleteProject(projectId).subscribe({
+        next: () => {
+          this.router.navigate(['/projects']);
+        },
+        error: (error) => {
+          console.error('Error deleting project:', error);
+        }
+      });
+
+    }
+    this.showDeleteDialog.set(false);
+    this.projectToDelete.set(null);
+  }
+
+  onCancelDelete(): void {
+    this.showDeleteDialog.set(false);
+    this.projectToDelete.set(null);
   }
 
   onCloseDeleteDialog(): void {
@@ -173,8 +197,6 @@ export class ProjectDetailsComponent implements OnInit {
   onCloseApplicantsDialog(): void {
     this.showApplicantsDialog.set(false);
   }
-
-
 
   onApply(): void {
     const userId = this.currentUser()?._id;
