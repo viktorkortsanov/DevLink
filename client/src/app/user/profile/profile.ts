@@ -112,8 +112,24 @@ export class ProfileComponent implements OnInit {
         }
       });
     } else {
-      // For employer, just set loading to false since we already have the IDs
-      this.isLoadingSecond.set(false);
+      if (this.user?.savedDevelopers?.length) {
+        this.userService.getAll().subscribe({
+          next: (allUsers) => {
+            const savedDevs = allUsers.filter(user => {
+              return user && user.username && this.user?.savedDevelopers?.includes(user._id!);
+            });
+            this.savedDevelopers.set(savedDevs);
+            this.isLoadingSecond.set(false);
+          },
+          error: (error) => {
+            console.error('Error loading saved developers:', error);
+            this.isLoadingSecond.set(false);
+          }
+        });
+      } else {
+        this.savedDevelopers.set([]);
+        this.isLoadingSecond.set(false);
+      }
     }
   }
 
@@ -122,7 +138,7 @@ export class ProfileComponent implements OnInit {
 
     if (tab === 'second') {
       const userId = this.route.snapshot.paramMap.get('userId');
-      
+
       if (this.isDeveloper() && this.savedProjects().length === 0) {
         this.loadSecondTabData(userId);
       } else if (this.isEmployer() && this.savedDevelopers().length === 0) {

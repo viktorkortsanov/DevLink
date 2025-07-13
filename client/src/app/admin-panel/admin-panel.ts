@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Route, RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { User } from '../types/user';
 import { UserService } from '../user/user.service';
 import { ConfirmDialogComponent } from '../dialog/dialog';
@@ -29,13 +29,11 @@ export class AdminPanelComponent implements OnInit {
   constructor(private userService: UserService, private adminService: AdminService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    // Check fragment immediately
     const currentFragment = this.route.snapshot.fragment;
     if (currentFragment) {
       this.onSectionChange(currentFragment);
     }
 
-    // Also subscribe for future changes
     this.route.fragment.subscribe(fragment => {
       if (fragment) {
         this.onSectionChange(fragment);
@@ -90,7 +88,6 @@ export class AdminPanelComponent implements OnInit {
   applyFilters(): void {
     let filtered = this.users;
 
-    // Search filter
     if (this.searchTerm()) {
       const search = this.searchTerm().toLowerCase();
       filtered = filtered.filter(user =>
@@ -99,7 +96,6 @@ export class AdminPanelComponent implements OnInit {
       );
     }
 
-    // Status filter (boolean)
     if (this.statusFilter() !== 'all') {
       if (this.statusFilter() === 'ADMIN') {
         filtered = filtered.filter(user => user.isAdmin === true);
@@ -108,7 +104,6 @@ export class AdminPanelComponent implements OnInit {
       }
     }
 
-    // Role filter
     if (this.roleFilter() !== 'all') {
       filtered = filtered.filter(user => user.role === this.roleFilter().toLocaleLowerCase());
     }
@@ -116,12 +111,6 @@ export class AdminPanelComponent implements OnInit {
     this.filteredUsers = filtered;
   }
 
-  onEditUser(userId: string): void {
-    // TODO: Open edit user modal/form
-    console.log('Edit user:', userId);
-  }
-
-  // Helper method to get user initials
   getUserInitials(username: string): string {
     return username
       .split(' ')
@@ -157,10 +146,6 @@ export class AdminPanelComponent implements OnInit {
     this.userToDelete.set(null);
   }
 
-  // TODO: Implement these methods
-  onAddUser(): void {
-    // TODO: Open add user modal/form
-  }
 
   onFeatureProject(): void {
     // TODO: Feature/unfeature project

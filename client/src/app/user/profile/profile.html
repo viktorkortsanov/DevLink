@@ -195,8 +195,10 @@
                 </div>
                 } @else {
                 <div class="developers-grid">
-                    @for (developerId of user?.savedDevelopers || []; track developerId) {
-                    <app-developer-card [developerId]="developerId" />
+                    @for (dev of savedDevelopers(); track dev._id) {
+                    @if (dev.username) {
+                    <app-developer-card [developer]="dev"></app-developer-card>
+                    }
                     }
                 </div>
                 }
