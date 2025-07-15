@@ -6,6 +6,7 @@ import { UserService } from '../user/user.service';
 import { ConfirmDialogComponent } from '../dialog/dialog';
 import { AdminService } from './admin.service';
 import { ProjectService } from '../projects/project.service';
+import { Project } from '../types/project';
 
 @Component({
   selector: 'app-admin-panel',
@@ -26,10 +27,11 @@ export class AdminPanelComponent implements OnInit {
   isLoadingUsers = signal<boolean>(false);
   showDeleteDialog = signal<boolean>(false);
   userToDelete = signal<string | null>(null);
+  projectToDelete = signal<string | null>(null);
 
   // Project Management
-  projects = signal<any[]>([]);
-  filteredProjects = signal<any[]>([]);
+  projects = signal<Project[]>([]);
+  filteredProjects = signal<Project[]>([]);
   projectSearchTerm = signal<string>('');
   isLoadingProjects = signal<boolean>(false);
 
@@ -188,13 +190,12 @@ export class AdminPanelComponent implements OnInit {
       const search = this.projectSearchTerm().toLowerCase();
       filtered = filtered.filter(project =>
         project.title.toLowerCase().includes(search) ||
-        project.owner?.username?.toLowerCase().includes(search)
+        (typeof project.owner === 'object' && project.owner?.username?.toLowerCase().includes(search))
       );
     }
 
     this.filteredProjects.set(filtered);
   }
-
   getProjectInitials(title: string): string {
     return title
       .split(' ')
@@ -205,8 +206,28 @@ export class AdminPanelComponent implements OnInit {
   }
 
   onDeleteProject(projectId: string): void {
-    // TODO: Implement delete project with dialog
-    console.log('Delete project:', projectId);
+    this.projectToDelete.set(projectId);
+    this.showDeleteDialog.set(true);
+  }
+
+  onCancelDeleteProject(): void {
+    this.showDeleteDialog.set(false);
+  }
+
+  onConfirmDeleteProject(): void {
+    const projectId = this.projectToDelete();
+    if (projectId) {
+      this.projectService.deleteProject(projectId).subscribe({
+        next: () => {
+          const updatedProjects = this.projects().filter(project => project._id !== projectId);
+          this.projects.set(updatedProjects);
+          this.applyProjectFilters();
+        },
+        error: (err) => console.error('Failed to delete project:', err)
+      });
+    }
+    this.showDeleteDialog.set(false);
+    this.projectToDelete.set(null);
   }
 
   onFeatureProject(): void {

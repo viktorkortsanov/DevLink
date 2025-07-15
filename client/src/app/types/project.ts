@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface Project {
     _id?: string;
     title: string;
@@ -10,7 +12,10 @@ export interface Project {
     workType: 'office' | 'hybrid' | 'remote';
     techStack: string;
     createdAt?: string;
-    owner?: string;
+    owner?: {
+        username?: string;
+        profileImage?: string;
+    };
     appliedUsers?: string[],
     favourites?: string[];
 }
