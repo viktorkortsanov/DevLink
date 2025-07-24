@@ -9,11 +9,33 @@ import { ProjectService } from '../projects/project.service';
 import { Project } from '../types/project';
 import { AuthService } from '../user/auth.service';
 import { SocketService } from './socket.service';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+
+// Analytics Data Interface
+export interface AnalyticsData {
+  userGrowth: {
+    labels: string[];
+    data: number[];
+  };
+  activeProjects: {
+    active: number;
+    total: number;
+  };
+  techStack: {
+    labels: string[];
+    data: number[];
+  };
+  userTypes: {
+    developers: number;
+    employers: number;
+  };
+}
 
 @Component({
   selector: 'app-admin-panel',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink, ConfirmDialogComponent],
+  imports: [CommonModule, RouterModule, RouterLink, ConfirmDialogComponent, BaseChartDirective],
   templateUrl: './admin-panel.html',
   styleUrls: ['./admin-panel.css']
 })
@@ -43,7 +65,25 @@ export class AdminPanelComponent implements OnInit {
   currentMessage = signal<string>('');
   isSending = signal<boolean>(false);
 
-  constructor(private userService: UserService, private adminService: AdminService, private projectService: ProjectService, private route: ActivatedRoute, private authService: AuthService, private socketService: SocketService) { }
+  // Analytics
+  analyticsData = signal<AnalyticsData | null>(null);
+  isLoadingAnalytics = signal<boolean>(false);
+
+  // Chart configurations
+  userGrowthChart: ChartConfiguration<'line'> | null = null;
+  techStackChart: ChartConfiguration<'bar'> | null = null;
+  userTypesChart: ChartConfiguration<'doughnut'> | null = null;
+
+  constructor(
+    private userService: UserService, 
+    private adminService: AdminService, 
+    private projectService: ProjectService, 
+    private route: ActivatedRoute, 
+    private authService: AuthService, 
+    private socketService: SocketService
+  ) { 
+    Chart.register(...registerables);
+  }
 
   ngOnInit(): void {
     const currentFragment = this.route.snapshot.fragment;
@@ -70,15 +110,17 @@ export class AdminPanelComponent implements OnInit {
       this.loadProjects();
     } else if (section === 'chat') {
       this.loadChatHistory();
+    } else if (section === 'analytics') {
+      this.loadAnalytics();
     }
   }
 
+  // User Management Methods
   loadUsers(): void {
     this.isLoadingUsers.set(true);
     this.userService.getAll().subscribe({
       next: (users) => {
         if (!users) return;
-
         this.users = users;
         this.applyFilters();
       },
@@ -90,7 +132,6 @@ export class AdminPanelComponent implements OnInit {
       }
     });
   }
-
 
   onSearchChange(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -193,14 +234,12 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
-  ////// Project Management
-
+  // Project Management Methods
   loadProjects(): void {
     this.isLoadingProjects.set(true);
     this.projectService.getAll().subscribe({
       next: (projects) => {
         if (!projects) return;
-
         this.projects.set(projects);
         this.applyProjectFilters();
       },
@@ -232,6 +271,7 @@ export class AdminPanelComponent implements OnInit {
 
     this.filteredProjects.set(filtered);
   }
+
   getProjectInitials(title: string): string {
     return title
       .split(' ')
@@ -266,8 +306,7 @@ export class AdminPanelComponent implements OnInit {
     this.projectToDelete.set(null);
   }
 
-  // Admin Chat
-
+  // Admin Chat Methods
   loadChatHistory(): void {
     this.adminService.getAdminChatHistory().subscribe({
       next: (messages) => {
@@ -318,7 +357,145 @@ export class AdminPanelComponent implements OnInit {
     });
   }
 
+  // Analytics Methods
+  getMockAnalyticsData(): AnalyticsData {
+    return {
+      userGrowth: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        data: [10, 25, 40, 65, 85, 120]
+      },
+      activeProjects: {
+        active: 45,
+        total: 78
+      },
+      techStack: {
+        labels: ['React', 'Angular', 'Vue.js', 'Node.js', 'Python', 'Java'],
+        data: [35, 28, 15, 42, 38, 25]
+      },
+      userTypes: {
+        developers: 180,
+        employers: 45
+      }
+    };
+  }
 
+  loadAnalytics(): void {
+    this.isLoadingAnalytics.set(true);
+    
+    // Използвай mock data засега
+    const mockData = this.getMockAnalyticsData();
+    this.analyticsData.set(mockData);
+    this.setupCharts(mockData);
+    this.isLoadingAnalytics.set(false);
+
+    // TODO: Replace with real API call
+    // this.analyticsService.getAnalyticsData().subscribe({
+    //   next: (data) => {
+    //     this.analyticsData.set(data);
+    //     this.setupCharts(data);
+    //     this.isLoadingAnalytics.set(false);
+    //   },
+    //   error: (error) => {
+    //     console.error('Failed to load analytics:', error);
+    //     this.isLoadingAnalytics.set(false);
+    //   }
+    // });
+  }
+
+  setupCharts(data: AnalyticsData): void {
+    // User Growth Chart (Line)
+    this.userGrowthChart = {
+      type: 'line',
+      data: {
+        labels: data.userGrowth.labels,
+        datasets: [{
+          label: 'New Users',
+          data: data.userGrowth.data,
+          borderColor: '#0080ff',
+          backgroundColor: 'rgba(0, 128, 255, 0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'User Growth Over Time'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    };
+
+    // Tech Stack Chart (Bar)
+    this.techStackChart = {
+      type: 'bar',
+      data: {
+        labels: data.techStack.labels,
+        datasets: [{
+          label: 'Projects',
+          data: data.techStack.data,
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF',
+            '#FF9F40'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Popular Technologies'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    };
+
+    // User Types Chart (Doughnut)
+    this.userTypesChart = {
+      type: 'doughnut',
+      data: {
+        labels: ['Developers', 'Employers'],
+        datasets: [{
+          data: [data.userTypes.developers, data.userTypes.employers],
+          backgroundColor: ['#36A2EB', '#FF6384']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'User Distribution'
+          }
+        }
+      }
+    };
+  }
+
+  getActiveProjectsPercentage(): number {
+    const data = this.analyticsData();
+    if (!data) return 0;
+    return Math.round((data.activeProjects.active / data.activeProjects.total) * 100);
+  }
+
+  // Utility Methods
   onFeatureProject(): void {
     // TODO: Feature/unfeature project
   }
