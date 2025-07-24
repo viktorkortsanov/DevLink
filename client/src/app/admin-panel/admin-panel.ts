@@ -11,8 +11,11 @@ import { AuthService } from '../user/auth.service';
 import { SocketService } from './socket.service';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { Store } from '@ngrx/store';
+import { Observable, take } from 'rxjs';
+import * as ChatActions from './store/chat/chat.actions';
+import * as ChatSelectors from './store/chat/chat.selectors';
 
-// Analytics Data Interface
 export interface AnalyticsData {
   userGrowth: {
     labels: string[];
@@ -60,10 +63,13 @@ export class AdminPanelComponent implements OnInit {
   projectSearchTerm = signal<string>('');
   isLoadingProjects = signal<boolean>(false);
 
-  // Admin Chat
-  chatMessages = signal<any[]>([]);
-  currentMessage = signal<string>('');
-  isSending = signal<boolean>(false);
+  // Admin Chat - NgRx Integration
+  chatMessages$!: Observable<any[]>;
+  currentMessage$!: Observable<string>;
+  isSending$!: Observable<boolean>;
+  isLoadingChat$!: Observable<boolean>;
+  isConnected$!: Observable<boolean>;
+  chatError$!: Observable<string | null>;
 
   // Analytics
   analyticsData = signal<AnalyticsData | null>(null);
@@ -80,9 +86,18 @@ export class AdminPanelComponent implements OnInit {
     private projectService: ProjectService, 
     private route: ActivatedRoute, 
     private authService: AuthService, 
-    private socketService: SocketService
+    private socketService: SocketService,
+    private store: Store
   ) { 
     Chart.register(...registerables);
+    
+    // Initialize store selectors after injection
+    this.chatMessages$ = this.store.select(ChatSelectors.selectChatMessages);
+    this.currentMessage$ = this.store.select(ChatSelectors.selectCurrentMessage);
+    this.isSending$ = this.store.select(ChatSelectors.selectIsSending);
+    this.isLoadingChat$ = this.store.select(ChatSelectors.selectIsLoading);
+    this.isConnected$ = this.store.select(ChatSelectors.selectIsConnected);
+    this.chatError$ = this.store.select(ChatSelectors.selectChatError);
   }
 
   ngOnInit(): void {
@@ -97,9 +112,21 @@ export class AdminPanelComponent implements OnInit {
       }
     });
 
+    // Socket.io listeners integrated with NgRx
     this.socketService.listen('new-admin-message').subscribe((message) => {
-      this.chatMessages.update(messages => [...messages, message]);
+      this.store.dispatch(ChatActions.messageReceived({ message }));
     });
+
+    this.socketService.listen('connect').subscribe(() => {
+      this.store.dispatch(ChatActions.socketConnected());
+    });
+
+    this.socketService.listen('disconnect').subscribe(() => {
+      this.store.dispatch(ChatActions.socketDisconnected());
+    });
+
+    // Initialize connection status
+    this.store.dispatch(ChatActions.socketConnected());
   }
 
   onSectionChange(section: string): void {
@@ -115,7 +142,7 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
-  // User Management Methods
+  // User Management Methods (unchanged)
   loadUsers(): void {
     this.isLoadingUsers.set(true);
     this.userService.getAll().subscribe({
@@ -234,7 +261,7 @@ export class AdminPanelComponent implements OnInit {
     }
   }
 
-  // Project Management Methods
+  // Project Management Methods (unchanged)
   loadProjects(): void {
     this.isLoadingProjects.set(true);
     this.projectService.getAll().subscribe({
@@ -306,58 +333,66 @@ export class AdminPanelComponent implements OnInit {
     this.projectToDelete.set(null);
   }
 
-  // Admin Chat Methods
+  // Admin Chat Methods - NgRx Integration
   loadChatHistory(): void {
+    this.store.dispatch(ChatActions.loadChatHistory());
+    
+    // Load chat history via service (since no effects)
     this.adminService.getAdminChatHistory().subscribe({
       next: (messages) => {
-        console.log('Loaded chat messages:', messages);
-        this.chatMessages.set(messages);
+        this.store.dispatch(ChatActions.loadChatHistorySuccess({ messages }));
       },
       error: (error) => {
-        console.error('Failed to load chat history:', error);
-        this.chatMessages.set([]);
+        this.store.dispatch(ChatActions.loadChatHistoryFailure({ error: error.message }));
       }
     });
   }
 
   onMessageInput(event: Event): void {
     const target = event.target as HTMLInputElement;
-    this.currentMessage.set(target.value);
+    this.store.dispatch(ChatActions.updateCurrentMessage({ message: target.value }));
   }
 
   sendMessage(): void {
-    const message = this.currentMessage().trim();
-    if (!message || this.isSending()) return;
+    this.currentMessage$.pipe(take(1)).subscribe(message => {
+      if (message.trim()) {
+        // Dispatch action for UI update
+        this.store.dispatch(ChatActions.sendMessage({ content: message.trim() }));
+        
+        // Socket.io emit
+        const user = this.currentUser();
+        this.socketService.emit('admin-message', {
+          message: message.trim(),
+          timestamp: new Date(),
+          username: user?.username || 'Admin',
+          profileImage: user?.profileImage || null,
+          adminId: user?._id || ''
+        });
 
-    this.isSending.set(true);
-    const user = this.currentUser();
-
-    this.socketService.emit('admin-message', {
-      message: message,
-      timestamp: new Date(),
-      username: user?.username || 'Admin',
-      profileImage: user?.profileImage || null,
-      userId: user?._id
-    });
-
-    this.currentMessage.set('');
-    this.isSending.set(false);
-  }
-
-  onClearChat(): void {
-    this.adminService.clearAdminChat().subscribe({
-      next: () => {
-        console.log('Chat cleared successfully');
-        this.chatMessages.set([]);
-        this.socketService.emit('chat-cleared', {});
-      },
-      error: (error) => {
-        console.error('Failed to clear chat:', error);
+        // Simulate success (since no effects)
+        setTimeout(() => {
+          this.store.dispatch(ChatActions.sendMessageSuccess());
+        }, 100);
       }
     });
   }
 
-  // Analytics Methods
+  onClearChat(): void {
+    this.store.dispatch(ChatActions.clearChat());
+    
+    // Clear chat via service (since no effects)
+    this.adminService.clearAdminChat().subscribe({
+      next: () => {
+        this.store.dispatch(ChatActions.clearChatSuccess());
+        this.socketService.emit('chat-cleared', {});
+      },
+      error: (error) => {
+        this.store.dispatch(ChatActions.loadChatHistoryFailure({ error: error.message }));
+      }
+    });
+  }
+
+  // Analytics Methods (unchanged)
   getMockAnalyticsData(): AnalyticsData {
     return {
       userGrowth: {
@@ -382,24 +417,10 @@ export class AdminPanelComponent implements OnInit {
   loadAnalytics(): void {
     this.isLoadingAnalytics.set(true);
     
-    // Използвай mock data засега
     const mockData = this.getMockAnalyticsData();
     this.analyticsData.set(mockData);
     this.setupCharts(mockData);
     this.isLoadingAnalytics.set(false);
-
-    // TODO: Replace with real API call
-    // this.analyticsService.getAnalyticsData().subscribe({
-    //   next: (data) => {
-    //     this.analyticsData.set(data);
-    //     this.setupCharts(data);
-    //     this.isLoadingAnalytics.set(false);
-    //   },
-    //   error: (error) => {
-    //     console.error('Failed to load analytics:', error);
-    //     this.isLoadingAnalytics.set(false);
-    //   }
-    // });
   }
 
   setupCharts(data: AnalyticsData): void {

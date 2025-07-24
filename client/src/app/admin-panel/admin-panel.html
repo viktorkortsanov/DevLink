@@ -531,19 +531,43 @@
       <div class="section-card">
         <div class="section-header">
           <h2 class="section-title">Admin Chat</h2>
-          <button class="action-btn" (click)="onClearChat()">
-            <svg class="btn-icon" fill="currentColor" viewBox="0 0 24 24">
-              <path
-                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-            </svg>
-            Clear Chat
-          </button>
+          <div class="header-actions">
+            <!-- Connection Status Indicator -->
+            <div class="connection-status" [class.connected]="isConnected$ | async"
+              [class.disconnected]="!(isConnected$ | async)">
+              <span class="status-dot"></span>
+              <span class="status-text">{{ (isConnected$ | async) ? 'Connected' : 'Disconnected' }}</span>
+            </div>
+            <button class="action-btn" (click)="onClearChat()" [disabled]="isLoadingChat$ | async">
+              <svg class="btn-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+              </svg>
+              Clear Chat
+            </button>
+          </div>
         </div>
+
+        <!-- Error Message -->
+        @if (chatError$ | async; as error) {
+        <div class="error-banner">
+          <svg class="error-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+          <span>{{ error }}</span>
+        </div>
+        }
 
         <div class="section-content">
           <div class="chat-container-instagram">
             <div class="messages-container">
-              @if (chatMessages().length === 0) {
+              @if (isLoadingChat$ | async) {
+              <div class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading chat history...</p>
+              </div>
+              } @else if ((chatMessages$ | async)?.length === 0) {
               <div class="no-messages">
                 <svg class="no-messages-icon" fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -554,7 +578,7 @@
               </div>
               } @else {
               <div class="messages-list">
-                @for (message of chatMessages(); track message.id) {
+                @for (message of (chatMessages$ | async); track message.id) {
                 <div class="message-wrapper" [class.own-message]="message.adminId === currentUser()?._id">
                   <div class="message-bubble" [class.admin-message]="message.adminId === currentUser()?._id"
                     [class.other-admin-message]="message.adminId !== currentUser()?._id">
@@ -579,14 +603,15 @@
               }
             </div>
 
-            <!-- Chat Input - ИЗВЪН messages container -->
+            <!-- Chat Input Section -->
             <div class="chat-input-section">
               <div class="input-container">
-                <input type="text" class="chat-input" placeholder="Type a message..." [value]="currentMessage()"
-                  (input)="onMessageInput($event)" (keyup.enter)="sendMessage()" maxlength="500">
+                <input type="text" class="chat-input" placeholder="Type a message..."
+                  [value]="(currentMessage$ | async) || ''" (input)="onMessageInput($event)"
+                  (keyup.enter)="sendMessage()" maxlength="500" [disabled]="isSending$ | async">
                 <button class="send-button" (click)="sendMessage()"
-                  [disabled]="!currentMessage().trim() || isSending()">
-                  @if (isSending()) {
+                  [disabled]="!(currentMessage$ | async)?.trim() || (isSending$ | async)">
+                  @if (isSending$ | async) {
                   <svg class="send-icon spinning" fill="currentColor" viewBox="0 0 24 24">
                     <path
                       d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
@@ -599,7 +624,10 @@
                 </button>
               </div>
               <div class="input-footer">
-                <span class="char-counter">{{ currentMessage().length }}/500</span>
+                <span class="char-counter">{{ (currentMessage$ | async)?.length || 0 }}/500</span>
+                @if (!(isConnected$ | async)) {
+                <span class="connection-warning">⚠️ Disconnected - messages may not send</span>
+                }
               </div>
             </div>
           </div>
