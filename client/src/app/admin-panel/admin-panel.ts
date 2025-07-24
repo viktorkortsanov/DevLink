@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { User } from '../types/user';
@@ -7,6 +7,8 @@ import { ConfirmDialogComponent } from '../dialog/dialog';
 import { AdminService } from './admin.service';
 import { ProjectService } from '../projects/project.service';
 import { Project } from '../types/project';
+import { AuthService } from '../user/auth.service';
+import { SocketService } from './socket.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -17,6 +19,7 @@ import { Project } from '../types/project';
 })
 export class AdminPanelComponent implements OnInit {
   activeSection = signal<string>('dashboard');
+  currentUser = computed(() => this.authService.currentUser());
 
   // User Management
   users: User[] = [];
@@ -35,7 +38,12 @@ export class AdminPanelComponent implements OnInit {
   projectSearchTerm = signal<string>('');
   isLoadingProjects = signal<boolean>(false);
 
-  constructor(private userService: UserService, private adminService: AdminService, private projectService: ProjectService, private route: ActivatedRoute) { }
+  // Admin Chat
+  chatMessages = signal<any[]>([]);
+  currentMessage = signal<string>('');
+  isSending = signal<boolean>(false);
+
+  constructor(private userService: UserService, private adminService: AdminService, private projectService: ProjectService, private route: ActivatedRoute, private authService: AuthService, private socketService: SocketService) { }
 
   ngOnInit(): void {
     const currentFragment = this.route.snapshot.fragment;
@@ -48,6 +56,10 @@ export class AdminPanelComponent implements OnInit {
         this.onSectionChange(fragment);
       }
     });
+
+    this.socketService.listen('new-admin-message').subscribe((message) => {
+      this.chatMessages.update(messages => [...messages, message]);
+    });
   }
 
   onSectionChange(section: string): void {
@@ -56,6 +68,8 @@ export class AdminPanelComponent implements OnInit {
       this.loadUsers();
     } else if (section === 'projects') {
       this.loadProjects();
+    } else if (section === 'chat') {
+      this.loadChatHistory();
     }
   }
 
@@ -229,6 +243,59 @@ export class AdminPanelComponent implements OnInit {
     this.showDeleteDialog.set(false);
     this.projectToDelete.set(null);
   }
+
+  // Admin Chat
+
+  loadChatHistory(): void {
+    this.adminService.getAdminChatHistory().subscribe({
+      next: (messages) => {
+        console.log('Loaded chat messages:', messages);
+        this.chatMessages.set(messages);
+      },
+      error: (error) => {
+        console.error('Failed to load chat history:', error);
+        this.chatMessages.set([]);
+      }
+    });
+  }
+
+  onMessageInput(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.currentMessage.set(target.value);
+  }
+
+  sendMessage(): void {
+    const message = this.currentMessage().trim();
+    if (!message || this.isSending()) return;
+
+    this.isSending.set(true);
+    const user = this.currentUser();
+
+    this.socketService.emit('admin-message', {
+      message: message,
+      timestamp: new Date(),
+      username: user?.username || 'Admin',
+      profileImage: user?.profileImage || null,
+      userId: user?._id
+    });
+
+    this.currentMessage.set('');
+    this.isSending.set(false);
+  }
+
+  onClearChat(): void {
+    this.adminService.clearAdminChat().subscribe({
+      next: () => {
+        console.log('Chat cleared successfully');
+        this.chatMessages.set([]);
+        this.socketService.emit('chat-cleared', {});
+      },
+      error: (error) => {
+        console.error('Failed to clear chat:', error);
+      }
+    });
+  }
+
 
   onFeatureProject(): void {
     // TODO: Feature/unfeature project

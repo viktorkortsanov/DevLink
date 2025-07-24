@@ -447,6 +447,7 @@
     }
 
     <!-- Admin Chat Section -->
+    <!-- Admin Chat Section - поправи тази част -->
     @if (activeSection() === 'chat') {
     <div class="content-section">
       <div class="page-header">
@@ -458,32 +459,82 @@
           <span>Admin Chat</span>
         </div>
         <h1 class="page-title">Admin Chat</h1>
-        <p class="page-description">Communicate with users and provide support</p>
+        <p class="page-description">Real-time communication between admins</p>
       </div>
 
       <div class="section-card">
         <div class="section-header">
-          <h2 class="section-title">Support Chat</h2>
-          <button class="action-btn">
+          <h2 class="section-title">Admin Chat</h2>
+          <button class="action-btn" (click)="onClearChat()">
             <svg class="btn-icon" fill="currentColor" viewBox="0 0 24 24">
               <path
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
             </svg>
-            Mark All Read
+            Clear Chat
           </button>
         </div>
+
         <div class="section-content">
-          <div class="chat-container">
-            <div class="chat-users">
-              <h3 style="margin-bottom: 1rem; color: #4a5568;">Active Conversations</h3>
-              <p>No active conversations</p>
+          <div class="chat-container-instagram">
+            <div class="messages-container">
+              @if (chatMessages().length === 0) {
+              <div class="no-messages">
+                <svg class="no-messages-icon" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
+                </svg>
+                <p>No messages yet</p>
+                <span>Start the conversation</span>
+              </div>
+              } @else {
+              <div class="messages-list">
+                @for (message of chatMessages(); track message.id) {
+                <div class="message-wrapper" [class.own-message]="message.adminId === currentUser()?._id">
+                  <div class="message-bubble" [class.admin-message]="message.adminId === currentUser()?._id"
+                    [class.other-admin-message]="message.adminId !== currentUser()?._id">
+                    <div class="message-header">
+                      <div class="user-avatar">
+                        @if (message.profileImage) {
+                        <img [src]="message.profileImage" [alt]="message.username">
+                        } @else {
+                        <span class="avatar-initials">{{ getUserInitials(message.username) }}</span>
+                        }
+                      </div>
+                      <div class="message-info">
+                        <span class="sender-name">{{ message.username }}</span>
+                        <span class="message-time">{{ message.timestamp | date:'HH:mm' }}</span>
+                      </div>
+                    </div>
+                    <div class="message-content">{{ message.content }}</div>
+                  </div>
+                </div>
+                }
+              </div>
+              }
             </div>
-            <div class="chat-messages">
-              <svg width="60" height="60" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
-              </svg>
-              <p>Select a conversation to start chatting</p>
+
+            <!-- Chat Input - ИЗВЪН messages container -->
+            <div class="chat-input-section">
+              <div class="input-container">
+                <input type="text" class="chat-input" placeholder="Type a message..." [value]="currentMessage()"
+                  (input)="onMessageInput($event)" (keyup.enter)="sendMessage()" maxlength="500">
+                <button class="send-button" (click)="sendMessage()"
+                  [disabled]="!currentMessage().trim() || isSending()">
+                  @if (isSending()) {
+                  <svg class="send-icon spinning" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                  </svg>
+                  } @else {
+                  <svg class="send-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                  </svg>
+                  }
+                </button>
+              </div>
+              <div class="input-footer">
+                <span class="char-counter">{{ currentMessage().length }}/500</span>
+              </div>
             </div>
           </div>
         </div>
