@@ -591,18 +591,36 @@
   word-wrap: break-word;
 }
 
-.message-bubble.other-message {
+.message-bubble.other-admin-message {
   background: white;
+  color: #2d3748;
   border: 1px solid #e2e8f0;
-  margin-left: 0;
+  margin-right: 0;
   border-bottom-left-radius: 0.375rem;
 }
 
+.other-admin-message .sender-name {
+  color: #4a5568;
+}
+
+.other-admin-message .message-time {
+  color: #718096;
+}
+
+/* Твоите съобщения остават сини */
 .message-bubble.admin-message {
-  background: linear-gradient(135deg, #0080ff, #0066cc);
+  background: #0080ff;
   color: white;
-  margin-right: 0;
+  margin-left: 0;
   border-bottom-right-radius: 0.375rem;
+}
+
+.admin-message .sender-name {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.admin-message .message-time {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* Message Headers */
@@ -884,6 +902,24 @@
 
 .action-btn-small.info:hover {
   background: #0066cc;
+}
+
+.action-btn-small.promote {
+  background: #38a169;
+  color: white;
+}
+
+.action-btn-small.promote:hover {
+  background: #2f855a;
+}
+
+.action-btn-small.demote {
+  background: #ed8936;
+  color: white;
+}
+
+.action-btn-small.demote:hover {
+  background: #dd6b20;
 }
 
 /* Responsive */

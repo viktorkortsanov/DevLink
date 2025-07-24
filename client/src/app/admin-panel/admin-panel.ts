@@ -171,6 +171,28 @@ export class AdminPanelComponent implements OnInit {
     this.userToDelete.set(null);
   }
 
+  onToggleAdmin(userId: string, isCurrentlyAdmin: boolean): void {
+    const action = isCurrentlyAdmin ? 'remove admin privileges from' : 'make admin';
+
+    if (confirm(`Are you sure you want to ${action} this user?`)) {
+      this.adminService.toggleAdminStatus(userId, !isCurrentlyAdmin).subscribe({
+        next: () => {
+          const userIndex = this.users.findIndex(u => u._id === userId);
+          if (userIndex !== -1) {
+            this.users[userIndex].isAdmin = !isCurrentlyAdmin;
+            this.applyFilters();
+          }
+
+          const message = isCurrentlyAdmin ? 'Admin privileges removed' : 'User promoted to admin';
+          console.log(message);
+        },
+        error: (error) => {
+          console.error('Failed to toggle admin status:', error);
+        }
+      });
+    }
+  }
+
   ////// Project Management
 
   loadProjects(): void {

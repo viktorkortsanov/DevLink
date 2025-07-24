@@ -260,6 +260,21 @@
                         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                       </svg>
                     </button>
+                    <button class="action-btn-small" [class.promote]="!user.isAdmin" [class.demote]="user.isAdmin"
+                      [title]="user.isAdmin ? 'Remove Admin' : 'Make Admin'"
+                      (click)="onToggleAdmin(user._id!, user.isAdmin!)">
+                      @if (user.isAdmin) {
+                      <svg class="btn-icon-small" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                          d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V7H4L5 9V19A2 2 0 0 0 7 21H17A2 2 0 0 0 19 19V9H21ZM13 11H11V13H13V11ZM13 15H11V17H13V15Z" />
+                      </svg>
+                      } @else {
+                      <svg class="btn-icon-small" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                          d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V7H4L5 9V19A2 2 0 0 0 7 21H17A2 2 0 0 0 19 19V9H21ZM9 11V13H15V11H9ZM9 15V17H15V15H9Z" />
+                      </svg>
+                      }
+                    </button>
                     <a [routerLink]="['/profile', user._id]" class="action-btn-small edit">
                       <svg class="btn-icon-small" fill="currentColor" viewBox="0 0 24 24">
                         <path

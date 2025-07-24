@@ -118,16 +118,33 @@ userController.put('/users/:userId/updateProfileImage', async (req, res) => {
     }
 });
 
-userController.get('/adminpanel/usermanagement/:userId/delete', async (req,res) => {
+userController.patch('/users/:id/admin-status', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { isAdmin } = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { isAdmin },
+            { new: true }
+        );
+
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update admin status' });
+    }
+});
+
+userController.get('/adminpanel/usermanagement/:userId/delete', async (req, res) => {
     const userId = req.params.userId;
     console.log(userId);
-    
+
     try {
         const user = await userService.delete(userId);
         res.status(200).json(user);
-    }catch(err) {
+    } catch (err) {
         console.error(err);
-        res.status(500),json({ message: 'Failed to delete user' });
+        res.status(500), json({ message: 'Failed to delete user' });
     }
 })
 

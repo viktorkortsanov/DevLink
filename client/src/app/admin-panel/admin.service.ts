@@ -28,4 +28,10 @@ export class AdminService {
   clearAdminChat(): Observable<any> {
     return this.http.delete(`${environment.apiUrl}/admin-chat`);
   }
+
+  toggleAdminStatus(userId: string, makeAdmin: boolean): Observable<any> {
+  return this.http.patch(`${environment.apiUrl}/users/${userId}/admin-status`, {
+    isAdmin: makeAdmin
+  });
+}
 }
