@@ -81,16 +81,16 @@ export class AdminPanelComponent implements OnInit {
   userTypesChart: ChartConfiguration<'doughnut'> | null = null;
 
   constructor(
-    private userService: UserService, 
-    private adminService: AdminService, 
-    private projectService: ProjectService, 
-    private route: ActivatedRoute, 
-    private authService: AuthService, 
+    private userService: UserService,
+    private adminService: AdminService,
+    private projectService: ProjectService,
+    private route: ActivatedRoute,
+    private authService: AuthService,
     private socketService: SocketService,
     private store: Store
-  ) { 
+  ) {
     Chart.register(...registerables);
-    
+
     // Initialize store selectors after injection
     this.chatMessages$ = this.store.select(ChatSelectors.selectChatMessages);
     this.currentMessage$ = this.store.select(ChatSelectors.selectCurrentMessage);
@@ -336,7 +336,7 @@ export class AdminPanelComponent implements OnInit {
   // Admin Chat Methods - NgRx Integration
   loadChatHistory(): void {
     this.store.dispatch(ChatActions.loadChatHistory());
-    
+
     // Load chat history via service (since no effects)
     this.adminService.getAdminChatHistory().subscribe({
       next: (messages) => {
@@ -358,15 +358,21 @@ export class AdminPanelComponent implements OnInit {
       if (message.trim()) {
         // Dispatch action for UI update
         this.store.dispatch(ChatActions.sendMessage({ content: message.trim() }));
-        
+
         // Socket.io emit
         const user = this.currentUser();
+
+        if (!user || !user._id) {
+          console.error('Missing user or user._id');
+          return;
+        }
+
         this.socketService.emit('admin-message', {
           message: message.trim(),
           timestamp: new Date(),
-          username: user?.username || 'Admin',
-          profileImage: user?.profileImage || null,
-          adminId: user?._id || ''
+          username: user.username,
+          profileImage: user.profileImage || null,
+          adminId: user._id
         });
 
         // Simulate success (since no effects)
@@ -379,7 +385,7 @@ export class AdminPanelComponent implements OnInit {
 
   onClearChat(): void {
     this.store.dispatch(ChatActions.clearChat());
-    
+
     // Clear chat via service (since no effects)
     this.adminService.clearAdminChat().subscribe({
       next: () => {
@@ -416,7 +422,7 @@ export class AdminPanelComponent implements OnInit {
 
   loadAnalytics(): void {
     this.isLoadingAnalytics.set(true);
-    
+
     const mockData = this.getMockAnalyticsData();
     this.analyticsData.set(mockData);
     this.setupCharts(mockData);

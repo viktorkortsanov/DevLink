@@ -7,6 +7,7 @@ import { authMiddleware } from './middlewares/authMiddleware.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import AdminChatMessage from './models/message.js';
+import { log } from 'console';
 
 const app = express();
 const server = createServer(app);
@@ -54,7 +55,7 @@ io.on('connection', (socket) => {
                 content: data.message,
                 username: data.username || 'Admin',
                 profileImage: data.profileImage || null,
-                adminId: data.userId
+                adminId: data.adminId
             });
 
             const savedMessage = await newMessage.save();

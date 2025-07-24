@@ -1,5 +1,5 @@
 export interface ChatMessage {
-    message: string;
+    content: string;
     timestamp: Date;
     username: string;
     profileImage: string | null;

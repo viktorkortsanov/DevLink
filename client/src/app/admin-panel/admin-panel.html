@@ -532,12 +532,6 @@
         <div class="section-header">
           <h2 class="section-title">Admin Chat</h2>
           <div class="header-actions">
-            <!-- Connection Status Indicator -->
-            <div class="connection-status" [class.connected]="isConnected$ | async"
-              [class.disconnected]="!(isConnected$ | async)">
-              <span class="status-dot"></span>
-              <span class="status-text">{{ (isConnected$ | async) ? 'Connected' : 'Disconnected' }}</span>
-            </div>
             <button class="action-btn" (click)="onClearChat()" [disabled]="isLoadingChat$ | async">
               <svg class="btn-icon" fill="currentColor" viewBox="0 0 24 24">
                 <path
