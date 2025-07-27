@@ -43,7 +43,7 @@ export interface AnalyticsData {
   styleUrls: ['./admin-panel.css']
 })
 export class AdminPanelComponent implements OnInit {
-  activeSection = signal<string>('dashboard');
+  activeSection = signal<string>('users');
   currentUser = computed(() => this.authService.currentUser());
 
   // User Management
@@ -104,6 +104,8 @@ export class AdminPanelComponent implements OnInit {
     const currentFragment = this.route.snapshot.fragment;
     if (currentFragment) {
       this.onSectionChange(currentFragment);
+    } else {
+      this.loadUsers();
     }
 
     this.route.fragment.subscribe(fragment => {
@@ -356,10 +358,6 @@ export class AdminPanelComponent implements OnInit {
   sendMessage(): void {
     this.currentMessage$.pipe(take(1)).subscribe(message => {
       if (message.trim()) {
-        // Dispatch action for UI update
-        this.store.dispatch(ChatActions.sendMessage({ content: message.trim() }));
-
-        // Socket.io emit
         const user = this.currentUser();
 
         if (!user || !user._id) {
@@ -367,6 +365,7 @@ export class AdminPanelComponent implements OnInit {
           return;
         }
 
+        // Само socket emit - премахни NgRx dispatch-овете
         this.socketService.emit('admin-message', {
           message: message.trim(),
           timestamp: new Date(),
@@ -375,10 +374,8 @@ export class AdminPanelComponent implements OnInit {
           adminId: user._id
         });
 
-        // Simulate success (since no effects)
-        setTimeout(() => {
-          this.store.dispatch(ChatActions.sendMessageSuccess());
-        }, 100);
+        // Изчисти съобщението в store
+        this.store.dispatch(ChatActions.updateCurrentMessage({ message: '' }));
       }
     });
   }
