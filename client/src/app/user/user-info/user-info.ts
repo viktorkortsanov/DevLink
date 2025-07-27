@@ -4,6 +4,7 @@ import { UserService } from '../user.service';
 import { CapitalizePipe } from '../../shared/pipes/capitalize-pipe';
 import { AuthService } from '../auth.service';
 import { User, Review } from '../../types/user';
+import { GitHubService } from '../github.service';
 
 @Component({
   selector: 'app-user-info',
@@ -19,6 +20,8 @@ export class UserInfoComponent implements OnInit {
   isSaved = signal<boolean>(false);
   currentUser = computed(() => this.authService.currentUser());
   userInfo: User | null = null;
+  topRepos = signal<any>(null);
+  isLoadingGithub = signal<boolean>(false);
 
   // Infinite scroll properties
   displayedReviews = signal<Review[]>([]);
@@ -34,6 +37,7 @@ export class UserInfoComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private authService: AuthService,
+    private githubService: GitHubService
   ) { }
 
   ngOnInit(): void {
@@ -63,12 +67,12 @@ export class UserInfoComponent implements OnInit {
     if (!this.userId) return;
 
     this.isLoading.set(true);
-
     this.userService.getUserInfo(this.userId).subscribe({
       next: (user) => {
         this.user.set(user);
         this.initializeReviews();
         this.isLoading.set(false);
+        this.loadTopRepositories();
       },
       error: (error) => {
         console.error('Error loading user info:', error);
@@ -92,7 +96,7 @@ export class UserInfoComponent implements OnInit {
   getAverageRating(): number {
     const reviews = this.userReviews;
     if (reviews.length === 0) return 0;
-    
+
     const totalStars = reviews.reduce((sum: number, review: Review) => sum + review.stars, 0);
     const average = totalStars / reviews.length;
     return Math.round(average * 10) / 10; // Round to 1 decimal place
@@ -178,15 +182,15 @@ export class UserInfoComponent implements OnInit {
       const nextPage = this.currentPage() + 1;
       const startIndex = nextPage * this.reviewsPerPage;
       const endIndex = startIndex + this.reviewsPerPage;
-      
+
       const newReviews = allReviews.slice(startIndex, endIndex);
-      
+
       if (newReviews.length > 0) {
         const currentDisplayed = this.displayedReviews();
         this.displayedReviews.set([...currentDisplayed, ...newReviews]);
         this.currentPage.set(nextPage);
       }
-      
+
       // Check if there are more reviews
       this.hasMoreReviews.set(endIndex < allReviews.length);
       this.isLoadingMore.set(false);
@@ -197,7 +201,7 @@ export class UserInfoComponent implements OnInit {
     this.loadMoreReviews();
   }
 
-  getOwnerInfo(review: Review): {username: string, profileImage?: string} | null {
+  getOwnerInfo(review: Review): { username: string, profileImage?: string } | null {
     if (typeof review.owner === 'object' && review.owner !== null) {
       return review.owner;  // Populated данни
     }
@@ -208,5 +212,30 @@ export class UserInfoComponent implements OnInit {
   get canGiveFeedback(): boolean {
     const currentUserId = this.currentUser()?._id;
     return !!currentUserId && currentUserId !== this.userId;
+  }
+
+  loadTopRepositories(): void {
+    const user = this.user();
+    console.log('User object:', user);
+    console.log('GitHub link:', user?.githubLink);
+
+    if (!user?.githubLink) {
+      console.log('No GitHub link found');
+      return;
+    }
+
+    this.isLoadingGithub.set(true);
+
+    this.githubService.getTopRepositories(user.githubLink).subscribe({
+      next: (repos) => {
+        console.log('GitHub repos response:', repos);
+        this.topRepos.set(repos);
+        this.isLoadingGithub.set(false);
+      },
+      error: (error) => {
+        console.log('GitHub API error:', error);
+        this.isLoadingGithub.set(false);
+      }
+    });
   }
 }
