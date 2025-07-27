@@ -31,7 +31,7 @@ export class DevelopersContainerComponent implements OnInit {
 
     this.userService.getAll().subscribe({
       next: (users) => {
-        const filteredDevelopers = users.filter(u => u.role === 'developer');
+        const filteredDevelopers = users.filter(u => u.role === 'developer' && u.bio?.length! >= 100);
         this.developers.set(filteredDevelopers);
         this.filteredDevelopers.set(filteredDevelopers);
         this.isLoading.set(false);
