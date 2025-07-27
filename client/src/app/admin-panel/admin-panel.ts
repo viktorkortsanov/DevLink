@@ -518,17 +518,4 @@ export class AdminPanelComponent implements OnInit {
     if (!data) return 0;
     return Math.round((data.activeProjects.active / data.activeProjects.total) * 100);
   }
-
-  // Utility Methods
-  onFeatureProject(): void {
-    // TODO: Feature/unfeature project
-  }
-
-  onExportReport(): void {
-    // TODO: Export analytics report
-  }
-
-  onMarkAllRead(): void {
-    // TODO: Mark all chat messages as read
-  }
 }
