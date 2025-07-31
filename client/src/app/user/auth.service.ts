@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
 import { UserService } from './user.service';
+import emailjs from '@emailjs/browser';
 
 @Injectable({
   providedIn: 'root'
@@ -48,9 +49,20 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/register`, userData, {
       withCredentials: true
     }).pipe(
-      tap((res) => {
+      tap(async (res) => {
         const { _id, username, email, profileImage, role, isAdmin } = res.user;
         const user: User = { _id, username, email, profileImage, role, isAdmin };
+
+        try {
+          await emailjs.send(
+            'service_b98xzqr',
+            'template_6flqxas',
+            { username, email },
+            'mxz5zqh2O_h0HA_5_'
+          );
+        } catch (error) {
+          console.warn('Failed to send welcome email:', error);
+        }
 
         localStorage.setItem('user', JSON.stringify(user));
         this._currentUser.set(user);
