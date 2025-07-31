@@ -1,0 +1,123 @@
+<div class="contacts-container">
+    <div class="contacts-header">
+        <h1 class="contacts-title">Get in Touch</h1>
+        <p class="contacts-subtitle">We'd love to hear from you. Send us a message and we'll respond as soon as
+            possible.</p>
+    </div>
+
+    <div class="contacts-content">
+        <!-- Contact Form -->
+        <div class="contact-form-section">
+            <div class="form-card">
+                <h2 class="form-title">Send us a Message</h2>
+
+                <!-- Success Message -->
+                @if (submitSuccess()) {
+                <div class="success-message">
+                    <svg class="success-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                    </svg>
+                    <span>Message sent successfully! We'll get back to you soon.</span>
+                </div>
+                }
+
+                <!-- Error Message -->
+                @if (submitError()) {
+                <div class="error-message">
+                    <svg class="error-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                    </svg>
+                    <span>{{ submitError() }}</span>
+                </div>
+                }
+
+                <form class="contact-form" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" id="email" class="form-input" placeholder="your.email@example.com"
+                            [value]="contactForm().email" (input)="updateForm('email', $any($event.target).value)"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" id="subject" class="form-input" placeholder="What is this about?"
+                            [value]="contactForm().subject" (input)="updateForm('subject', $any($event.target).value)"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea id="message" class="form-textarea" rows="6"
+                            placeholder="Tell us more about your inquiry..." [value]="contactForm().message"
+                            (input)="updateForm('message', $any($event.target).value)" required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" [disabled]="isSubmitting()">
+                        @if (isSubmitting()) {
+                        <svg class="loading-spinner" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                        </svg>
+                        Sending...
+                        } @else {
+                        <svg class="send-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                        </svg>
+                        Send Message
+                        }
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Map Section -->
+        <div class="map-section">
+            <div class="map-card">
+                <h2 class="map-title">Find Us</h2>
+                <div class="map-container">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2975.582643914942!2d26.204075875899367!3d41.77265537125357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14b2cf96997c2d2d%3A0xc9d5dce09461585e!2z0KHQoyDigJ4g0JQt0YAg0J_QtdGC0YrRgCDQkdC10YDQvtC9IOKAnA!5e0!3m2!1sbg!2sbg!4v1753982461447!5m2!1sbg!2sbg"
+                        width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+                <div class="contact-info">
+                    <div class="info-item">
+                        <svg class="info-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                        <div>
+                            <h4>Address</h4>
+                            <p>
+                                Center, 28 Otets Paisii Street, 6500 Svilengrad<br>Svilengrad, Bulgaria</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <svg class="info-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                        </svg>
+                        <div>
+                            <h4>Email</h4>
+                            <p>devlinkcontact&#64;gmail.com</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <svg class="info-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                        </svg>
+                        <div>
+                            <h4>Response Time</h4>
+                            <p>We typically respond within 24 hours</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
