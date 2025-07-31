@@ -1,0 +1,140 @@
+.terms-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.terms-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.terms-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.last-updated {
+  font-size: 1rem;
+  color: #718096;
+  font-style: italic;
+}
+
+.terms-content {
+  line-height: 1.7;
+  color: #4a5568;
+}
+
+.terms-section {
+  margin-bottom: 2.5rem;
+}
+
+.terms-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.terms-section p {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.terms-section ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.terms-section li {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.terms-section li strong {
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.terms-footer {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-link {
+  color: #0080ff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.back-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #0080ff;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.back-home-btn:hover {
+  background: #0066cc;
+  transform: translateY(-1px);
+}
+
+.back-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .terms-container {
+    padding: 1rem;
+  }
+  
+  .terms-title {
+    font-size: 2rem;
+  }
+  
+  .terms-section h2 {
+    font-size: 1.25rem;
+  }
+  
+  .terms-section p,
+  .terms-section li {
+    font-size: 0.95rem;
+  }
+  
+  .footer-links {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}

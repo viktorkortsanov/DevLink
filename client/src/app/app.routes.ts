@@ -14,6 +14,7 @@ import { ReviewFormComponent } from './developers-container/review-form/review-f
 import { AdminPanelComponent } from './admin-panel/admin-panel';
 import { EditUserComponent } from './admin-panel/edit-user/edit-user';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy';
+import { TermsOfServiceComponent } from './terms-of-service/terms-of-service';
 
 export const routes: Routes = [
     { path: '', component: Main },
@@ -30,5 +31,6 @@ export const routes: Routes = [
     { path: 'developers/:userId/review', component: ReviewFormComponent },
     { path: 'adminpanel', component: AdminPanelComponent },
     { path: 'adminpanel/:userId/edit-user', component: EditUserComponent },
-    { path: 'privacy-policy', component: PrivacyPolicyComponent }
+    { path: 'privacy-policy', component: PrivacyPolicyComponent },
+    { path: 'terms-of-service', component: TermsOfServiceComponent }
 ];
