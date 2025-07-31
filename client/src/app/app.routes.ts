@@ -13,6 +13,7 @@ import { DevelopersContainerComponent } from './developers-container/developers-
 import { ReviewFormComponent } from './developers-container/review-form/review-form';
 import { AdminPanelComponent } from './admin-panel/admin-panel';
 import { EditUserComponent } from './admin-panel/edit-user/edit-user';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy';
 
 export const routes: Routes = [
     { path: '', component: Main },
@@ -29,4 +30,5 @@ export const routes: Routes = [
     { path: 'developers/:userId/review', component: ReviewFormComponent },
     { path: 'adminpanel', component: AdminPanelComponent },
     { path: 'adminpanel/:userId/edit-user', component: EditUserComponent },
+    { path: 'privacy-policy', component: PrivacyPolicyComponent }
 ];
