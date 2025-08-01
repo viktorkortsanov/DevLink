@@ -1,4 +1,4 @@
-import { Component, computed, OnInit, signal } from '@angular/core';
+import { Component, computed, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { User } from '../types/user';
@@ -12,7 +12,7 @@ import { SocketService } from './socket.service';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { Store } from '@ngrx/store';
-import { Observable, take } from 'rxjs';
+import { Observable, Subscription, take } from 'rxjs';
 import * as ChatActions from './store/chat/chat.actions';
 import * as ChatSelectors from './store/chat/chat.selectors';
 
@@ -42,9 +42,10 @@ export interface AnalyticsData {
   templateUrl: './admin-panel.html',
   styleUrls: ['./admin-panel.css']
 })
-export class AdminPanelComponent implements OnInit {
+export class AdminPanelComponent implements OnInit, OnDestroy {
   activeSection = signal<string>('users');
   currentUser = computed(() => this.authService.currentUser());
+  private socketSubscriptions: Subscription[] = [];
 
   // User Management
   users: User[] = [];
@@ -115,20 +116,29 @@ export class AdminPanelComponent implements OnInit {
     });
 
     // Socket.io listeners integrated with NgRx
-    this.socketService.listen('new-admin-message').subscribe((message) => {
+    const messageSubscription = this.socketService.listen('new-admin-message').subscribe((message) => {
+      console.log('Received message from socket:', message); // debug log
       this.store.dispatch(ChatActions.messageReceived({ message }));
     });
 
-    this.socketService.listen('connect').subscribe(() => {
+    const connectSubscription = this.socketService.listen('connect').subscribe(() => {
       this.store.dispatch(ChatActions.socketConnected());
     });
 
-    this.socketService.listen('disconnect').subscribe(() => {
+    const disconnectSubscription = this.socketService.listen('disconnect').subscribe(() => {
       this.store.dispatch(ChatActions.socketDisconnected());
     });
 
+    // Запази subscriptions за cleanup
+    this.socketSubscriptions.push(messageSubscription, connectSubscription, disconnectSubscription);
+
     // Initialize connection status
     this.store.dispatch(ChatActions.socketConnected());
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup subscriptions
+    this.socketSubscriptions.forEach(sub => sub.unsubscribe());
   }
 
   onSectionChange(section: string): void {
@@ -365,7 +375,7 @@ export class AdminPanelComponent implements OnInit {
           return;
         }
 
-        // Само socket emit - премахни NgRx dispatch-овете
+        // Само socket emit - премахни NgRx dispatch-овете за изпращане
         this.socketService.emit('admin-message', {
           message: message.trim(),
           timestamp: new Date(),
