@@ -102,7 +102,7 @@ The main goal of DevLink is to **accelerate the career journey** of junior devel
    ```
 
 5. **Run the Client Part**:  
-   Start the React development server with this command:
+   Start the Angular development server with this command:
 
    ```bash
    ng serve
@@ -162,7 +162,7 @@ Download Node.JS from here **[Node.JS](https://nodejs.org/en/download)**.
   <img src="https://github.com/devicons/devicon/blob/master/icons/express/express-original.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/mongodb/mongodb-original.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/ngrx/ngrx-original.svg" width="40" height="40"/>
-  <img src="https://github.com/devicons/devicon/blob/master/icons/chartjs/charjs-original.svg" width="40" height="40"/>
+  <img src="https://github.com/devicons/devicon/blob/master/icons/chartjs/chartjs-original.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/firebase/firebase-plain.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/html5/html5-original.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/css3/css3-original.svg" width="40" height="40"/>
