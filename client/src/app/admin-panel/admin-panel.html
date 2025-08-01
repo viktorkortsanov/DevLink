@@ -1,12 +1,15 @@
 <div class="admin-container">
-  <app-confirm-dialog [isVisible]="showDeleteDialog()" title="Delete User"
-    message="Are you sure you want to delete this?" confirmText="Delete" cancelText="Cancel"
+  <app-confirm-dialog [isVisible]="showDeleteDialog() && userToDelete() !== null" title="Delete User"
+    message="Are you sure you want to delete this user?" confirmText="Delete" cancelText="Cancel"
     (confirm)="onConfirmDelete()" (cancel)="onCancelDelete()">
   </app-confirm-dialog>
-  <app-confirm-dialog [isVisible]="showDeleteDialog()" title="Delete User"
-    message="Are you sure you want to delete this?" confirmText="Delete" cancelText="Cancel"
+
+  <!-- Project Delete Dialog -->
+  <app-confirm-dialog [isVisible]="showDeleteDialog() && projectToDelete() !== null" title="Delete Project"
+    message="Are you sure you want to delete this project?" confirmText="Delete" cancelText="Cancel"
     (confirm)="onConfirmDeleteProject()" (cancel)="onCancelDeleteProject()">
   </app-confirm-dialog>
+  
   <aside class="sidebar">
     <div class="sidebar-header">
       <h1 class="admin-title">DevLink Admin</h1>
