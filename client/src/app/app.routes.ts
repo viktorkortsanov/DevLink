@@ -16,6 +16,7 @@ import { EditUserComponent } from './admin-panel/edit-user/edit-user';
 import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy';
 import { TermsOfServiceComponent } from './terms-of-service/terms-of-service';
 import { ContactsComponent } from './contact-us/contact-us';
+import { MentorshipComponent } from './mentors/mentors';
 
 export const routes: Routes = [
     { path: '', component: Main },
@@ -34,5 +35,6 @@ export const routes: Routes = [
     { path: 'adminpanel/:userId/edit-user', component: EditUserComponent },
     { path: 'privacy-policy', component: PrivacyPolicyComponent },
     { path: 'terms-of-service', component: TermsOfServiceComponent },
-    { path: 'contact-us', component: ContactsComponent }
+    { path: 'contact-us', component: ContactsComponent },
+    { path: 'mentors', component: MentorshipComponent },
 ];

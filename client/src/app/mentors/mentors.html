@@ -1,0 +1,220 @@
+<div class="mentorship-container">
+    <!-- Hero Section -->
+    <section class="hero-section" [@fadeInUp]>
+        <div class="hero-content">
+            <h1 class="hero-title">Accelerate Your Development Journey</h1>
+            <p class="hero-subtitle">Join our exclusive mentorship program and learn from industry experts who have
+                shaped the future of technology. Get personalized guidance, real-world insights, and fast-track your
+                career growth.</p>
+            <button class="cta-button" (click)="scrollToForm()">
+                Apply Now
+                <svg class="cta-icon" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- Mentors Section -->
+    <section class="mentors-section">
+        <div class="container">
+            <div class="section-header" [@fadeInUp]>
+                <h2 class="section-title">Meet Your Mentors</h2>
+                <p class="section-subtitle">Learn from seasoned professionals who are passionate about sharing their
+                    knowledge and helping you succeed in your development career.</p>
+            </div>
+            <div class="mentors-grid" [@staggerIn]>
+                @for (mentor of mentors; track mentor.name) {
+                <div class="mentor-card" [@scaleIn]>
+                    <div class="mentor-avatar">
+                        <img [src]="mentor.image" [alt]="mentor.name">
+                    </div>
+                    <div class="mentor-role">{{ mentor.role }}</div>
+                    <h3 class="mentor-name">{{ mentor.name }}</h3>
+                    <div class="mentor-company">{{ mentor.company }}</div>
+                </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="benefits-section">
+        <div class="container">
+            <div class="section-header" [@fadeInUp]>
+                <h2 class="section-title">Program Benefits</h2>
+                <p class="section-subtitle">Discover what makes our mentorship program unique and how it can transform
+                    your development career.</p>
+            </div>
+            <div class="benefits-grid" [@staggerIn]>
+                @for (benefit of benefits; track benefit.title) {
+                <div class="benefit-card" [@scaleIn]>
+                    <div class="benefit-icon" [class]="benefit.colorClass">{{ benefit.icon }}</div>
+                    <h3 class="benefit-title">{{ benefit.title }}</h3>
+                    <p class="benefit-text">{{ benefit.description }}</p>
+                </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Application Form Section -->
+    <section class="application-section" id="application">
+        <div class="container">
+            <div class="form-container" [@fadeInUp]>
+                <div class="form-header">
+                    <h2 class="form-title">Apply for Mentorship Program</h2>
+                    <p class="form-subtitle">Take the first step towards accelerating your development career. Fill out
+                        the application below and we'll review your submission.</p>
+                </div>
+
+                <!-- Success Message -->
+                @if (showSuccessMessage()) {
+                <div class="success-message" [@slideIn]>
+                    <svg class="success-icon" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                    </svg>
+                    <span>Application submitted successfully! We will review your application and get back to you within
+                        3-5 business days.</span>
+                </div>
+                }
+
+                <form (ngSubmit)="onSubmit()">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="firstName">First Name *</label>
+                            <input type="text" id="firstName" class="form-input" [class.error]="hasError('firstName')"
+                                [value]="applicationForm().firstName"
+                                (input)="updateForm('firstName', $any($event.target).value)" required>
+                            @if (hasError('firstName')) {
+                            <span class="error-message">{{ getError('firstName') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" class="form-input" [class.error]="hasError('lastName')"
+                                [value]="applicationForm().lastName"
+                                (input)="updateForm('lastName', $any($event.target).value)" required>
+                            @if (hasError('lastName')) {
+                            <span class="error-message">{{ getError('lastName') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address *</label>
+                            <input type="email" id="email" class="form-input" [class.error]="hasError('email')"
+                                [value]="applicationForm().email"
+                                (input)="updateForm('email', $any($event.target).value)" required>
+                            @if (hasError('email')) {
+                            <span class="error-message">{{ getError('email') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" class="form-input" [class.error]="hasError('phone')"
+                                [value]="applicationForm().phone"
+                                (input)="updateForm('phone', $any($event.target).value)" required>
+                            @if (hasError('phone')) {
+                            <span class="error-message">{{ getError('phone') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="location">Location *</label>
+                            <input type="text" id="location" class="form-input" placeholder="City, Country"
+                                [class.error]="hasError('location')" [value]="applicationForm().location"
+                                (input)="updateForm('location', $any($event.target).value)" required>
+                            @if (hasError('location')) {
+                            <span class="error-message">{{ getError('location') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="age">Age *</label>
+                            <input type="number" id="age" class="form-input" min="18" max="65"
+                                [class.error]="hasError('age')" [value]="applicationForm().age"
+                                (input)="updateForm('age', +$any($event.target).value)" required>
+                            @if (hasError('age')) {
+                            <span class="error-message">{{ getError('age') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="experience">Years of Professional Experience *</label>
+                            <select id="experience" class="form-select" [class.error]="hasError('experience')"
+                                [value]="applicationForm().experience"
+                                (change)="updateForm('experience', $any($event.target).value)" required>
+                                <option value="">Select experience level</option>
+                                <option value="0-1">0-1 years</option>
+                                <option value="1-3">1-3 years</option>
+                                <option value="3-5">3-5 years</option>
+                                <option value="5-10">5-10 years</option>
+                                <option value="10+">10+ years</option>
+                            </select>
+                            @if (hasError('experience')) {
+                            <span class="error-message">{{ getError('experience') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="company">Current Company *</label>
+                            <input type="text" id="company" class="form-input" [class.error]="hasError('company')"
+                                [value]="applicationForm().company"
+                                (input)="updateForm('company', $any($event.target).value)" required>
+                            @if (hasError('company')) {
+                            <span class="error-message">{{ getError('company') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label" for="position">Current Position *</label>
+                            <input type="text" id="position" class="form-input"
+                                placeholder="e.g., Frontend Developer, Software Engineer"
+                                [class.error]="hasError('position')" [value]="applicationForm().position"
+                                (input)="updateForm('position', $any($event.target).value)" required>
+                            @if (hasError('position')) {
+                            <span class="error-message">{{ getError('position') }}</span>
+                            }
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label class="form-label" for="motivation">Goals and Motivation *</label>
+                            <p class="field-description">Tell us about your goals and motivation for applying to the
+                                mentorship program. What do you hope to achieve? (Please keep it within a few sentences)
+                            </p>
+                            <textarea id="motivation" class="form-textarea"
+                                placeholder="Describe your goals, what you want to learn, and how mentorship will help you grow..."
+                                [class.error]="hasError('motivation')" [value]="applicationForm().motivation"
+                                (input)="updateForm('motivation', $any($event.target).value)" required></textarea>
+                            @if (hasError('motivation')) {
+                            <span class="error-message">{{ getError('motivation') }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="privacy" class="checkbox-input"
+                            [checked]="applicationForm().privacyAccepted"
+                            (change)="updateForm('privacyAccepted', $any($event.target).checked)" required>
+                        <label for="privacy" class="checkbox-label">
+                            I agree that my personal data may be used in accordance with the <a href="/privacy-policy"
+                                target="_blank">Privacy Policy</a>.
+                        </label>
+                        @if (hasError('privacyAccepted')) {
+                        <span class="error-message">{{ getError('privacyAccepted') }}</span>
+                        }
+                    </div>
+
+                    <div class="form-message">
+                        We will contact you upon approval of your application. The review process typically takes 3-5
+                        business days.
+                    </div>
+
+                    <button type="submit" class="submit-button">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
