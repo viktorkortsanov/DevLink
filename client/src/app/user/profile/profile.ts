@@ -32,8 +32,13 @@ export class ProfileComponent implements OnInit {
     private route: ActivatedRoute
   ) { }
 
-  isDeveloper = computed(() => this.user?.role === 'developer');
-  isEmployer = computed(() => this.user?.role === 'employer');
+  get isDeveloper(): boolean {
+    return this.user?.role === 'developer';
+  }
+
+  get isEmployer(): boolean {
+    return this.user?.role === 'employer';
+  }
 
   ngOnInit(): void {
     const userId = this.route.snapshot.paramMap.get('userId');
@@ -59,7 +64,7 @@ export class ProfileComponent implements OnInit {
 
     this.isLoadingFirst.set(true);
 
-    if (this.isDeveloper()) {
+    if (this.isDeveloper) {
       const userId = this.user?._id;
 
       this.projectService.getAll().subscribe({
@@ -95,7 +100,7 @@ export class ProfileComponent implements OnInit {
 
     this.isLoadingSecond.set(true);
 
-    if (this.isDeveloper()) {
+    if (this.isDeveloper) {
       // Load saved projects for developer
       this.projectService.getAll().subscribe({
         next: (projects) => {
@@ -139,9 +144,9 @@ export class ProfileComponent implements OnInit {
     if (tab === 'second') {
       const userId = this.route.snapshot.paramMap.get('userId');
 
-      if (this.isDeveloper() && this.savedProjects().length === 0) {
+      if (this.isDeveloper && this.savedProjects().length === 0) {
         this.loadSecondTabData(userId);
-      } else if (this.isEmployer() && this.savedDevelopers().length === 0) {
+      } else if (this.isEmployer && this.savedDevelopers().length === 0) {
         this.loadSecondTabData(userId);
       }
     }
@@ -175,18 +180,18 @@ export class ProfileComponent implements OnInit {
   }
 
   getFirstTabLabel(): string {
-    return this.isDeveloper() ? 'Applied Projects' : 'Posted Projects';
+    return this.isDeveloper ? 'Applied Projects' : 'Posted Projects';
   }
 
   getSecondTabLabel(): string {
-    return this.isDeveloper() ? 'Saved Projects' : 'Saved Developers';
+    return this.isDeveloper ? 'Saved Projects' : 'Saved Developers';
   }
 
   getFirstTabEmptyMessage(): string {
-    return this.isDeveloper() ? 'No applied projects yet' : 'No posted projects yet';
+    return this.isDeveloper ? 'No applied projects yet' : 'No posted projects yet';
   }
 
   getSecondTabEmptyMessage(): string {
-    return this.isDeveloper() ? 'No saved projects yet' : 'No saved developers yet';
+    return this.isDeveloper ? 'No saved projects yet' : 'No saved developers yet';
   }
 }

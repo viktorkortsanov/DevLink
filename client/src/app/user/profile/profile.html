@@ -112,7 +112,7 @@
             </div>
             <div class="content-area">
                 @if (activeTab() === 'first') {
-                @if (isDeveloper()) {
+                @if (isDeveloper) {
                 <!-- Applied Projects for Developer -->
                 @if (isLoadingFirst()) {
                 <div class="loading-state">
@@ -158,7 +158,7 @@
                 }
 
                 @if (activeTab() === 'second') {
-                @if (isDeveloper()) {
+                @if (isDeveloper) {
                 <!-- Saved Projects for Developer -->
                 @if (isLoadingSecond()) {
                 <div class="loading-state">
