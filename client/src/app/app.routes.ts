@@ -27,7 +27,7 @@ export const routes: Routes = [
     { path: 'sign-in', component: LoginComponent, canActivate: [isAuth] },
     { path: 'sign-up', component: RegisterComponent, canActivate: [isAuth] },
     { path: 'profile/:userId', component: ProfileComponent, canActivate: [authGuard] },
-    { path: 'profile/:userId/info', component: UserInfoComponent, canActivate: [authGuard] },
+    { path: 'profile/:userId/info', component: UserInfoComponent, canActivate: [authGuard, employerGuard] },
     { path: 'edit-profile/:userId', component: EditProfileComponent, canActivate: [authGuard] },
     { path: 'projects', component: ProjectsContainerComponent },
     { path: 'create-project', component: CreateProjectComponent, canActivate: [employerGuard] },

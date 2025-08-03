@@ -1,11 +1,13 @@
 import { Component, signal, computed, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CapitalizePipe } from '../../shared/pipes/capitalize-pipe';
 import { UserService } from '../user.service';
 import { User } from '../../types/user';
 import { ProjectService } from '../../projects/project.service';
 import { ProjectCardComponent } from '../../projects/project-card/project-card';
 import { DeveloperCardComponent } from '../../developers-container/developer-card/developer-card';
+import { AuthService } from '../auth.service';
+import { Project } from '../../types/project';
 
 @Component({
   selector: 'app-profile',
@@ -18,18 +20,22 @@ export class ProfileComponent implements OnInit {
   activeTab = signal<'first' | 'second'>('first');
 
   user: User | null = null;
-  appliedProjects = signal<any[]>([]);
-  savedProjects = signal<any[]>([]);
-  postedProjects = signal<any[]>([]);
+  appliedProjects = signal<Project[]>([]);
+  savedProjects = signal<Project[]>([]);
+  postedProjects = signal<Project[]>([]);
   savedDevelopers = signal<User[]>([]);
 
   isLoadingFirst = signal<boolean>(false);
   isLoadingSecond = signal<boolean>(false);
+  currentUser = computed(() => this.authService.currentUser());
+
 
   constructor(
     private userService: UserService,
     private projectService: ProjectService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   get isDeveloper(): boolean {
@@ -42,8 +48,11 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const userId = this.route.snapshot.paramMap.get('userId');
-    this.loadUserInfo(userId);
-    this.loadFirstTabData(userId);
+    if (userId !== this.currentUser()?._id) {
+      this.router.navigate(['/']);
+    } else {
+      this.loadUserInfo(userId);
+    }
   }
 
   loadUserInfo(userId: string | null): void {
@@ -52,6 +61,7 @@ export class ProfileComponent implements OnInit {
     this.userService.getUserInfo(userId).subscribe({
       next: (userInfo) => {
         this.user = userInfo;
+        this.loadFirstTabData(userId);
       },
       error: (error) => {
         console.error('Error loading user info:', error);
@@ -60,17 +70,13 @@ export class ProfileComponent implements OnInit {
   }
 
   loadFirstTabData(userId: string | null): void {
-    if (!userId) return;
+    if (!userId || !this.user) return;
 
     this.isLoadingFirst.set(true);
 
     if (this.isDeveloper) {
-      const userId = this.user?._id;
-
       this.projectService.getAll().subscribe({
         next: (projects) => {
-          if (!userId) return;
-
           const filtered = projects.filter(p => p.appliedUsers?.includes(userId));
           this.appliedProjects.set(filtered);
           this.isLoadingFirst.set(false);
@@ -83,8 +89,12 @@ export class ProfileComponent implements OnInit {
     } else {
       this.projectService.getAll().subscribe({
         next: (allProjects) => {
-          const userProjects = allProjects.filter(project => project.owner === userId);
+          console.log(allProjects);
+          
+          const userProjects = allProjects.filter(project => project.owner?._id === userId);
           this.postedProjects.set(userProjects);
+          console.log(this.postedProjects);
+          
           this.isLoadingFirst.set(false);
         },
         error: (error) => {
@@ -101,7 +111,6 @@ export class ProfileComponent implements OnInit {
     this.isLoadingSecond.set(true);
 
     if (this.isDeveloper) {
-      // Load saved projects for developer
       this.projectService.getAll().subscribe({
         next: (projects) => {
           const saved = projects.filter(p =>

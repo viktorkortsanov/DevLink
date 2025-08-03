@@ -15,6 +15,7 @@ export interface Project {
     owner?: {
         username?: string;
         profileImage?: string;
+        _id?: string;
     };
     appliedUsers?: string[],
     favourites?: string[];
