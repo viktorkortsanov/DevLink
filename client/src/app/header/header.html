@@ -5,7 +5,9 @@
         <nav class="nav">
             <a routerLink="/" class="nav-link">Home</a>
             <a routerLink="/projects" class="nav-link">Projects</a>
+            @if(userInfo()?.role === 'employer') {
             <a routerLink="/developers" class="nav-link">Developers</a>
+            }
             <a routerLink="/mentors" class="nav-link">Mentors</a>
         </nav>
 

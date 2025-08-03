@@ -31,18 +31,22 @@ export class ProjectDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     const userId = this.currentUser()?._id;
-    if (!userId) return;
 
-    this.userService.getUserInfo(userId).subscribe({
-      next: (userInfo) => {
-        this.user = userInfo;
-        this.loadProjectDetails();
-      },
-      error: (err) => console.error(err)
-    });
+    if (userId) {
+      this.userService.getUserInfo(userId).subscribe({
+        next: (userInfo) => {
+          this.user = userInfo;
+          this.loadProjectDetails();
+        },
+        error: (err) => {
+          console.error(err);
+          this.loadProjectDetails();
+        }
+      });
+    } else {
+      this.loadProjectDetails();
+    }
   }
-
-
 
   loadProjectDetails(): void {
     const projectId = this.route.snapshot.paramMap.get('projectId');

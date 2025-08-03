@@ -33,9 +33,8 @@ export class ReviewFormComponent implements OnInit {
   ngOnInit(): void {
     this.targetUserId = this.route.snapshot.paramMap.get('userId');
 
-    if (!this.currentUser()) {
-      this.router.navigate(['/login']);
-      return;
+    if (this.targetUserId === this.currentUser()?._id) {
+      this.router.navigate(['/']);
     }
   }
 

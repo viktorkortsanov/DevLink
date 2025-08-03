@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Project } from '../../types/project';
@@ -6,6 +6,7 @@ import { ProjectService } from '../project.service';
 import { FirebaseStorageService } from '../../services/firebase.service';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from '../../../config/firebase.config';
+import { AuthService } from '../../user/auth.service';
 
 @Component({
   selector: 'app-edit-project',
@@ -23,6 +24,8 @@ export class EditProjectComponent implements OnInit {
   selectedFile: File | null = null;
   projectId: string | null = null;
   currentProject: Project | null = null;
+  currentUser = computed(() => this.authService.currentUser());
+
 
   projectTypes = [
     { value: 'front-end', label: 'Front-End' },
@@ -50,7 +53,8 @@ export class EditProjectComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private projectService: ProjectService,
-    private firebaseStorageService: FirebaseStorageService
+    private firebaseStorageService: FirebaseStorageService,
+    private authService: AuthService
   ) {
     this.projectForm = this.fb.group({
       title: ['', [
@@ -88,6 +92,10 @@ export class EditProjectComponent implements OnInit {
   ngOnInit(): void {
     this.projectId = this.route.snapshot.paramMap.get('projectId');
     this.loadProjectData();
+
+    if (this.currentProject?.owner !== this.currentUser()?._id) {
+      this.router.navigate(['/']);
+    }
   }
 
   loadProjectData(): void {
