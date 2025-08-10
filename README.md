@@ -152,6 +152,23 @@ Download Node.JS from here **[Node.JS](https://nodejs.org/en/download)**.
    ❗ If you have problems connecting to the data base change the url in index.js ❗
 ---
 
+### **Client Tests Setup**
+
+1. **Navigate to the Client Directory**:  
+   Go to the client directory.
+
+   ```bash
+   cd client
+   ```
+
+2. **Run tests using the following command**:
+
+   ```bash
+   ng test
+   ```
+   
+---
+
 🛠️ **Technologies and Tools**  
 
 <p align="left">
@@ -164,6 +181,8 @@ Download Node.JS from here **[Node.JS](https://nodejs.org/en/download)**.
   <img src="https://github.com/devicons/devicon/blob/master/icons/ngrx/ngrx-original.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/chartjs/chartjs-original.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/firebase/firebase-plain.svg" width="40" height="40"/>
+  <img src="https://github.com/devicons/devicon/blob/master/icons/karma/karma-original.svg" width="40" height="40"/>
+  <img src="https://github.com/devicons/devicon/blob/master/icons/jasmine/jasmine-original.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/html5/html5-original.svg" width="40" height="40"/>
   <img src="https://github.com/devicons/devicon/blob/master/icons/css3/css3-original.svg" width="40" height="40"/>
 </p>
@@ -182,4 +201,6 @@ Download Node.JS from here **[Node.JS](https://nodejs.org/en/download)**.
 - **cors** – Enables Cross-Origin Resource Sharing to allow safe API calls between different origins  
 - **firebase** – Used for hosting the frontend, handling authentication, and providing real-time database capabilities  
 - **chart.js** – A flexible and lightweight charting library for building visual data dashboards
-- **swiper** – A modern mobile-friendly slider used for carousels, profile previews, and other swipe-based UI elements  
+- **swiper** – A modern mobile-friendly slider used for carousels, profile previews, and other swipe-based UI elements
+- **karma** – A test runner that launches browsers, executes tests, and reports results, enabling automated testing in the Angular environment
+- **jasmine** – A behavior-driven development framework for testing JavaScript code, providing a clear syntax for writing unit and integration tests
