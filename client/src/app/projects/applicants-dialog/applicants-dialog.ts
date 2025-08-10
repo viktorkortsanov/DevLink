@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UserService } from '../../user/user.service';
+import { User } from '../../types/user';
 
 @Component({
   selector: 'app-applicants-dialog',
@@ -17,7 +18,7 @@ export class ApplicantsDialogComponent implements OnInit, OnChanges {
 
   @Output() close = new EventEmitter<void>();
 
-  applicants = signal<any[]>([]);
+  applicants = signal<User[]>([]);
   isLoading = signal<boolean>(false);
 
   constructor(private userService: UserService) { }

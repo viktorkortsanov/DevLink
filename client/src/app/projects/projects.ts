@@ -3,6 +3,7 @@ import { AuthService } from '../user/auth.service';
 import { RouterLink } from '@angular/router';
 import { ProjectService } from './project.service';
 import { ProjectCardComponent } from './project-card/project-card';
+import { Project } from '../types/project';
 
 @Component({
   selector: 'app-projects-container',
@@ -11,7 +12,7 @@ import { ProjectCardComponent } from './project-card/project-card';
   styleUrls: ['./projects.css']
 })
 export class ProjectsContainerComponent implements OnInit {
-  allProjects = signal<any[]>([]);
+  allProjects = signal<Project[]>([]);
   isLoading = signal<boolean>(false);
   currentPage = signal<number>(1);
   projectTypeFilter = signal<string>('');
