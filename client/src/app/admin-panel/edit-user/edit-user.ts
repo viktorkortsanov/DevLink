@@ -167,7 +167,7 @@ export class EditUserComponent implements OnInit {
       this.adminService.updateUserInfo(userId, profileData).subscribe({
         next: (updatedUser) => {
           this.isLoading.set(false);
-          this.router.navigate([`/profile/${userId}`]);
+          this.router.navigate(['/adminpanel'], { fragment: 'users' });
         },
         error: (err) => {
           this.isLoading.set(false);

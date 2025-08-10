@@ -46,9 +46,6 @@
                   @if (applicant.bio) {
                     <p class="applicant-bio">{{ applicant.bio }}</p>
                   }
-                  @if (applicant.appliedAt) {
-                    <span class="applied-date">Applied {{ applicant.appliedAt | date:'dd.MM.yyyy' }}</span>
-                  }
                 </div>
                 
                 <div class="applicant-actions">

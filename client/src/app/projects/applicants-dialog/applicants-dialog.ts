@@ -49,6 +49,7 @@ export class ApplicantsDialogComponent implements OnInit, OnChanges {
     forkJoin(userRequests).subscribe({
       next: (users) => {
         this.applicants.set([...users]);
+        console.log(this.applicants());
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -80,7 +81,7 @@ export class ApplicantsDialogComponent implements OnInit, OnChanges {
       .slice(0, 2);
   }
 
-  hasValidProfileImage(user: any): boolean {
+  hasValidProfileImage(user: User): boolean {
     return !!(user?.profileImage && user.profileImage.trim() !== '');
   }
 }

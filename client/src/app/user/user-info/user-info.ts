@@ -23,14 +23,11 @@ export class UserInfoComponent implements OnInit {
   topRepos = signal<any>(null);
   isLoadingGithub = signal<boolean>(false);
 
-  // Infinite scroll properties
   displayedReviews = signal<Review[]>([]);
   reviewsPerPage = 3;
   currentPage = signal<number>(0);
   isLoadingMore = signal<boolean>(false);
   hasMoreReviews = signal<boolean>(true);
-
-  // Removed mock data - using real reviews from user object
 
   constructor(
     private route: ActivatedRoute,
@@ -91,15 +88,13 @@ export class UserInfoComponent implements OnInit {
     this.userService.saveUser(this.userId, this.userInfo._id);
   }
 
-  // Removed onGiveFeedback method - now using routerLink
-
   getAverageRating(): number {
     const reviews = this.userReviews;
     if (reviews.length === 0) return 0;
 
     const totalStars = reviews.reduce((sum: number, review: Review) => sum + review.stars, 0);
     const average = totalStars / reviews.length;
-    return Math.round(average * 10) / 10; // Round to 1 decimal place
+    return Math.round(average * 10) / 10;
   }
 
   getStarArray(rating: number): boolean[] {
@@ -153,7 +148,6 @@ export class UserInfoComponent implements OnInit {
     event.target.style.display = 'none';
   }
 
-  // Helper methods for reviews
   get userReviews(): Review[] {
     const reviews = this.user()?.reviews;
     return Array.isArray(reviews) ? reviews : [];
@@ -163,7 +157,6 @@ export class UserInfoComponent implements OnInit {
     return this.userReviews.length > 0;
   }
 
-  // Infinite scroll methods
   initializeReviews(): void {
     const reviews = this.userReviews;
     this.currentPage.set(0);
@@ -176,7 +169,6 @@ export class UserInfoComponent implements OnInit {
 
     this.isLoadingMore.set(true);
 
-    // Simulate loading delay (remove in production)
     setTimeout(() => {
       const allReviews = this.userReviews;
       const nextPage = this.currentPage() + 1;
@@ -191,7 +183,6 @@ export class UserInfoComponent implements OnInit {
         this.currentPage.set(nextPage);
       }
 
-      // Check if there are more reviews
       this.hasMoreReviews.set(endIndex < allReviews.length);
       this.isLoadingMore.set(false);
     }, 500);
@@ -203,12 +194,11 @@ export class UserInfoComponent implements OnInit {
 
   getOwnerInfo(review: Review): { username: string, profileImage?: string } | null {
     if (typeof review.owner === 'object' && review.owner !== null) {
-      return review.owner;  // Populated данни
+      return review.owner;
     }
-    return null;  // Само ID - няма данни
+    return null;
   }
 
-  // Helper method to check if current user can give feedback
   get canGiveFeedback(): boolean {
     const currentUserId = this.currentUser()?._id;
     return !!currentUserId && currentUserId !== this.userId;

@@ -93,7 +93,7 @@ export class EditProjectComponent implements OnInit {
     this.projectId = this.route.snapshot.paramMap.get('projectId');
     this.loadProjectData();
 
-    if (this.currentProject?.owner !== this.currentUser()?._id) {
+    if (this.currentProject?.owner !== this.currentUser()?._id && !this.currentUser()?.isAdmin) {
       this.router.navigate(['/']);
     }
   }

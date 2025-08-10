@@ -48,7 +48,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     const userId = this.route.snapshot.paramMap.get('userId');
-    if (userId !== this.currentUser()?._id) {
+    if (userId !== this.currentUser()?._id && !this.currentUser()?.isAdmin) {
       this.router.navigate(['/']);
     } else {
       this.loadUserInfo(userId);

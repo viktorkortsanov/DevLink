@@ -55,6 +55,7 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
   roleFilter = signal<string>('all');
   isLoadingUsers = signal<boolean>(false);
   showDeleteDialog = signal<boolean>(false);
+  showDeleteUserDialog = signal<boolean>(false);
   userToDelete = signal<string | null>(null);
   projectToDelete = signal<string | null>(null);
 
@@ -227,7 +228,7 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
 
   onDeleteUser(userId: string): void {
     this.userToDelete.set(userId);
-    this.showDeleteDialog.set(true);
+    this.showDeleteUserDialog.set(true);
   }
 
   onConfirmDelete(): void {
@@ -247,7 +248,7 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
   }
 
   onCancelDelete(): void {
-    this.showDeleteDialog.set(false);
+    this.showDeleteUserDialog.set(false);
     this.userToDelete.set(null);
   }
 
