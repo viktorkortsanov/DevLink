@@ -1,0 +1,99 @@
+<div class="feedback-container">
+  <!-- Header -->
+  <div class="feedback-header">
+    <h1 class="feedback-title">User Feedback</h1>
+    <p class="feedback-subtitle">See what users are saying about DevLink</p>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading feedback...</p>
+    </div>
+  }
+
+  <!-- Feedback List -->
+  @if (!isLoading() && paginatedFeedback.length > 0) {
+    <div class="feedback-list">
+      @for (feedback of paginatedFeedback; track $index) {
+        <div class="feedback-card">
+          <div class="user-info">
+            <div class="user-avatar">
+              @if (getOwnerInfo(feedback)?.profileImage) {
+                <img [src]="getOwnerInfo(feedback)?.profileImage" [alt]="getOwnerInfo(feedback)?.username">
+              } @else {
+                {{ getInitials(getOwnerInfo(feedback)?.username || 'Anonymous User') }}
+              }
+            </div>
+            <div class="user-details">
+              <h4>{{ getOwnerInfo(feedback)?.username || 'Anonymous User' }}</h4>
+              <div class="rating-stars">
+                @for (star of getStarArray(feedback.stars); track $index) {
+                  <svg class="star" [class.filled]="star" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                }
+              </div>
+            </div>
+          </div>
+          
+          <div class="feedback-message">
+            {{ feedback.content }}
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+      <div class="pagination">
+        <button 
+          class="page-btn" 
+          (click)="changePage('prev')" 
+          [disabled]="currentPage() === 1">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+          Previous
+        </button>
+        
+        <div class="pagination-numbers">
+          @for (page of pageNumbers; track page) {
+            <button 
+              class="page-btn" 
+              [class.active]="page === currentPage()"
+              (click)="goToPage(page)">
+              {{ page }}
+            </button>
+          }
+        </div>
+        
+        <div class="page-info">
+          Page {{ currentPage() }} of {{ totalPages }}
+        </div>
+        
+        <button 
+          class="page-btn" 
+          (click)="changePage('next')" 
+          [disabled]="currentPage() === totalPages">
+          Next
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && paginatedFeedback.length === 0) {
+    <div class="empty-state">
+      <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+      <h3>No feedback found</h3>
+      <p>No user feedback available at the moment.</p>
+    </div>
+  }
+</div>

@@ -49,6 +49,17 @@ export interface Review {
   createdAt?: string;
 }
 
+export interface FeedbackData {
+  owner?: {
+    _id: string;
+    username: string;
+    profileImage?: string;
+  } | string;
+  content: string;
+  stars: number;
+  createdAt?: string;
+}
+
 export interface AuthResponse {
   user: User
 }

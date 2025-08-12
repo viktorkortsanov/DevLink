@@ -91,3 +91,26 @@
 .swiper-button-prev {
     color: #0080ff;
 }
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2em;
+}
+
+.btn-container a {
+    background-color: #364257;
+    color: #ffffff;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-container a:hover {
+    background-color: #2d3748;
+}

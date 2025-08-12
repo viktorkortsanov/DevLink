@@ -175,5 +175,11 @@ userController.post('/feedback', async (req, res) => {
         console.error(err);
         res.status(500).json({ error: 'Failed to add feedback.' });
     }
-})
+});
+
+userController.get('/feedbacks', async(req,res) => {
+        const feedbacks = await userService.getFeedbacks();
+        res.json(feedbacks);
+});
+
 export default userController;

@@ -206,8 +206,6 @@ export class UserInfoComponent implements OnInit {
 
   loadTopRepositories(): void {
     const user = this.user();
-    console.log('User object:', user);
-    console.log('GitHub link:', user?.githubLink);
 
     if (!user?.githubLink) {
       console.log('No GitHub link found');
@@ -218,7 +216,6 @@ export class UserInfoComponent implements OnInit {
 
     this.githubService.getTopRepositories(user.githubLink).subscribe({
       next: (repos) => {
-        console.log('GitHub repos response:', repos);
         this.topRepos.set(repos);
         this.isLoadingGithub.set(false);
       },

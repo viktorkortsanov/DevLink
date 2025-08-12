@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Review, User } from '../types/user';
+import { FeedbackData, Review, User } from '../types/user';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -35,9 +35,13 @@ export class UserService {
 
   submitReview(targetUserId: string | undefined, userId: string | undefined, reviewData: Review) {
     return this.http.post(`${environment.apiUrl}/users/${targetUserId}/${userId}/reviews`, reviewData).subscribe();
-  }
+  };
 
-  giveFeedback(feedbackData: any) { //TO-DO CREATE INTERFACE
+  giveFeedback(feedbackData: FeedbackData) { //TO-DO CREATE INTERFACE
     return this.http.post(`${environment.apiUrl}/feedback`, feedbackData).subscribe();
+  };
+
+  getFeedbacks(): Observable<FeedbackData[]> {
+    return this.http.get<FeedbackData[]>(`${environment.apiUrl}/feedbacks`);
   }
 }

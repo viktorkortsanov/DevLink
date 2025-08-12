@@ -55,6 +55,13 @@ const userService = {
 
     postFeedback(userId, content, stars) {
         return Feedback.create({ owner: userId, content, stars })
+    },
+
+    getFeedbacks() {
+        return Feedback.find()
+            .populate('owner', 'username profileImage')
+            .lean()
+            .exec();
     }
 };
 

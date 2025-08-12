@@ -22,6 +22,7 @@ import { adminGuard } from './guards/admin.guard';
 import { employerGuard } from './guards/employer.guard';
 import { isAuth } from './guards/isAuth.guard';
 import { Feedback } from './feedback/feedback';
+import { FeedbacksComponent } from './feedbacks/feedbacks';
 
 export const routes: Routes = [
     { path: '', component: Main },
@@ -42,5 +43,6 @@ export const routes: Routes = [
     { path: 'terms-of-service', component: TermsOfServiceComponent },
     { path: 'contact-us', component: ContactsComponent },
     { path: 'mentors', component: MentorshipComponent },
-    { path: 'feedback', component: Feedback, canActivate: [authGuard] }
+    { path: 'feedback', component: Feedback, canActivate: [authGuard] },
+    { path: 'feedbacks', component: FeedbacksComponent}
 ];

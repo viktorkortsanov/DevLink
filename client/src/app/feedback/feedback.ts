@@ -62,7 +62,7 @@ export class Feedback implements OnInit {
 
     this.userService.giveFeedback(reviewData)
     this.isSubmitting.set(false);
-    this.router.navigate(['/feedback']);
+    this.router.navigate(['/feedbacks']);
   }
 
   onCancel(): void {
