@@ -36,4 +36,8 @@ export class UserService {
   submitReview(targetUserId: string | undefined, userId: string | undefined, reviewData: Review) {
     return this.http.post(`${environment.apiUrl}/users/${targetUserId}/${userId}/reviews`, reviewData).subscribe();
   }
+
+  giveFeedback(feedbackData: any) { //TO-DO CREATE INTERFACE
+    return this.http.post(`${environment.apiUrl}/feedback`, feedbackData).subscribe();
+  }
 }

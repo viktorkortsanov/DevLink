@@ -1,3 +1,4 @@
+import Feedback from "../models/feedback.js";
 import User from "../models/user.js";
 
 const userService = {
@@ -51,6 +52,10 @@ const userService = {
     postReview(devId, userId, content, stars) {
         return User.findByIdAndUpdate(devId, { $push: { reviews: { owner: userId, content, stars } } },)
     },
+
+    postFeedback(userId, content, stars) {
+        return Feedback.create({ owner: userId, content, stars })
+    }
 };
 
 export default userService;

@@ -165,4 +165,15 @@ userController.get('/users/:userId/profileImage', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
+userController.post('/feedback', async (req, res) => {
+    const { owner, content, stars } = req.body;
+    try {
+        const feedback = await userService.postFeedback(owner, content, stars);
+        res.status(200).json({ message: 'Feedback added successfully.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to add feedback.' });
+    }
+})
 export default userController;
