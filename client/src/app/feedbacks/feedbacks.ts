@@ -1,22 +1,11 @@
 import { Component, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { UserService } from '../user/user.service';
 import { FeedbackData } from '../types/user';
 
-interface FeedbackItem {
-  id: string;
-  user: {
-    name: string;
-    profileImage?: string;
-  };
-  rating: number;
-  message: string;
-}
 
 @Component({
   selector: 'app-feedbacks',
-  standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './feedbacks.html',
   styleUrls: ['./feedbacks.css']
 })
