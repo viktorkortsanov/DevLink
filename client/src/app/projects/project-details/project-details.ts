@@ -8,10 +8,11 @@ import { ConfirmDialogComponent } from '../../dialog/dialog';
 import { ApplicantsDialogComponent } from '../applicants-dialog/applicants-dialog';
 import { User } from '../../types/user';
 import { UserService } from '../../user/user.service';
+import { ShortDatePipe } from '../../shared/pipes/date-pipe';
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule, RouterLink, ConfirmDialogComponent, ApplicantsDialogComponent],
+  imports: [RouterLink, ConfirmDialogComponent, ApplicantsDialogComponent, ShortDatePipe],
   templateUrl: './project-details.html',
   styleUrls: ['./project-details.css']
 })

@@ -4,14 +4,9 @@
   <p>Loading project details...</p>
 </div>
 } @else if (project) {
-<app-confirm-dialog
-  [isVisible]="showDeleteDialog()"
-  title="Delete Project"
-  message="Are you sure you want to delete this project?"
-  confirmText="Delete"
-  cancelText="Cancel"
-  (confirm)="onConfirmDelete()"
-  (cancel)="onCancelDelete()">
+<app-confirm-dialog [isVisible]="showDeleteDialog()" title="Delete Project"
+  message="Are you sure you want to delete this project?" confirmText="Delete" cancelText="Cancel"
+  (confirm)="onConfirmDelete()" (cancel)="onCancelDelete()">
 </app-confirm-dialog>
 <app-applicants-dialog [isVisible]="showApplicantsDialog()" [appliedUsers]="project.appliedUsers || []"
   (close)="onCloseApplicantsDialog()">
@@ -93,7 +88,7 @@
             <svg fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
-            {{ project.createdAt ? (project.createdAt | date:'dd.MM.yy') : '' }}
+            {{ project.createdAt ? (project.createdAt | shortDate) : '' }}
           </div>
         </div>
       </div>
@@ -152,7 +147,7 @@
 
       <div class="info-card">
         <h3 class="info-card-title">Posted</h3>
-        <div class="info-card-content">{{ project.createdAt ? (project.createdAt | date:'dd.MM.yy') : '' }}</div>
+        <div class="info-card-content">{{ project.createdAt ? (project.createdAt | shortDate) : '' }}</div>
       </div>
     </div>
 

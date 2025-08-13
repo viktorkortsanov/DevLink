@@ -24,7 +24,7 @@ export class FirebaseStorageService {
     }
 
     validateFile(file: File): { isValid: boolean; error?: string } {
-        const maxSize = 5 * 1024 * 1024; // 5MB
+        const maxSize = 5 * 1024 * 1024;
         const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
         if (!allowedTypes.includes(file.type)) {
