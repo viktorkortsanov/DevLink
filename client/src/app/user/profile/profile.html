@@ -113,7 +113,6 @@
             <div class="content-area">
                 @if (activeTab() === 'first') {
                 @if (isDeveloper) {
-                <!-- Applied Projects for Developer -->
                 @if (isLoadingFirst()) {
                 <div class="loading-state">
                     <div class="loading-spinner"></div>
@@ -134,7 +133,6 @@
                 </div>
                 }
                 } @else {
-                <!-- Posted Projects for Employer -->
                 @if (isLoadingFirst()) {
                 <div class="loading-state">
                     <div class="loading-spinner"></div>
@@ -159,7 +157,6 @@
 
                 @if (activeTab() === 'second') {
                 @if (isDeveloper) {
-                <!-- Saved Projects for Developer -->
                 @if (isLoadingSecond()) {
                 <div class="loading-state">
                     <div class="loading-spinner"></div>
@@ -180,7 +177,6 @@
                 </div>
                 }
                 } @else {
-                <!-- Saved Developers for Employer -->
                 @if (isLoadingSecond()) {
                 <div class="loading-state">
                     <div class="loading-spinner"></div>

@@ -8,7 +8,6 @@ import { GitHubService } from '../github.service';
 
 @Component({
   selector: 'app-user-info',
-  standalone: true,
   imports: [CapitalizePipe, RouterLink],
   templateUrl: './user-info.html',
   styleUrls: ['./user-info.css']

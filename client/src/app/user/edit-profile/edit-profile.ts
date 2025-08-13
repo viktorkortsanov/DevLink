@@ -8,7 +8,6 @@ import { FirebaseStorageService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-edit-profile',
-  standalone: true,
   imports: [ReactiveFormsModule, RouterModule],
   templateUrl: './edit-profile.html',
   styleUrls: ['./edit-profile.css']

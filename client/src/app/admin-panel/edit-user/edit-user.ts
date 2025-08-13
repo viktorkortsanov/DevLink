@@ -8,7 +8,6 @@ import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'app-edit-user',
-  standalone: true,
   imports: [ReactiveFormsModule, RouterModule],
   templateUrl: './edit-user.html',
   styleUrls: ['./edit-user.css']

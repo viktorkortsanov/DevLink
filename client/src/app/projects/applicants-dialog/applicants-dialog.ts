@@ -7,7 +7,6 @@ import { User } from '../../types/user';
 
 @Component({
   selector: 'app-applicants-dialog',
-  standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './applicants-dialog.html',
   styleUrls: ['./applicants-dialog.css']

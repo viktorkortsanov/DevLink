@@ -1,4 +1,3 @@
-/* Loading and Error States */
 .loading-container {
     display: flex;
     flex-direction: column;
@@ -39,7 +38,6 @@
     margin-bottom: 1rem;
 }
 
-/* Main Container */
 .user-info-container {
     max-width: 1200px;
     margin: 2rem auto;
@@ -49,7 +47,6 @@
     gap: 2rem;
 }
 
-/* Profile Card */
 .profile-card {
     background-color: #ffffff;
     border-radius: 1rem;
@@ -61,7 +58,6 @@
     position: relative;
 }
 
-/* Save Button - Inside Profile Card */
 .save-button-container {
     position: absolute;
     top: 1rem;
@@ -202,7 +198,6 @@
     height: 1rem;
 }
 
-/* Tech Stack */
 .tech-stack-section {
     margin: 1.5rem 0;
     padding-top: 1.5rem;
@@ -255,7 +250,6 @@
     white-space: nowrap;
 }
 
-/* Feedback Section */
 .feedback-section {
     background-color: #ffffff;
     border-radius: 1rem;
@@ -358,7 +352,6 @@
     height: 1rem;
 }
 
-/* Feedback List */
 .feedback-list {
     display: flex;
     flex-direction: column;
@@ -440,7 +433,6 @@
     margin: 0;
 }
 
-/* No Feedback State */
 .no-feedback {
     text-align: center;
     padding: 3rem 2rem;
@@ -464,19 +456,15 @@
     margin-bottom: 1.5rem;
 }
 
-/* Feedback List with Infinite Scroll */
 .feedback-list {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     max-height: 600px;
-    /* Ограничена височина */
     overflow-y: auto;
-    /* Scrollable */
     padding-right: 0.5rem;
 }
 
-/* Custom scrollbar */
 .feedback-list::-webkit-scrollbar {
     width: 6px;
 }
@@ -495,7 +483,6 @@
     background: #a8a8a8;
 }
 
-/* Loading More Indicator */
 .loading-more {
     display: flex;
     align-items: center;
@@ -514,7 +501,6 @@
     animation: spin 1s linear infinite;
 }
 
-/* Load More Button */
 .load-more-container {
     display: flex;
     justify-content: center;
@@ -547,7 +533,6 @@
     height: 1rem;
 }
 
-/* GitHub Repositories */
 .github-section {
     margin: 1.5rem 0;
     padding-top: 1.5rem;
@@ -636,7 +621,6 @@
     font-size: 0.875rem;
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
     .user-info-container {
         grid-template-columns: 350px 1fr;

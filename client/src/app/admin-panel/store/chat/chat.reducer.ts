@@ -5,7 +5,6 @@ import { initialChatState } from './chat.state';
 export const chatReducer = createReducer(
   initialChatState,
 
-  // Loading chat history
   on(ChatActions.loadChatHistory, (state) => ({
     ...state,
     isLoading: true,
@@ -24,7 +23,6 @@ export const chatReducer = createReducer(
     isLoading: false
   })),
 
-  // Sending messages
   on(ChatActions.sendMessage, (state) => ({
     ...state,
     isSending: true,
@@ -43,19 +41,16 @@ export const chatReducer = createReducer(
     isSending: false
   })),
 
-  // Receiving messages
   on(ChatActions.messageReceived, (state, { message }) => ({
     ...state,
     messages: [...state.messages, message]
   })),
 
-  // Input management
   on(ChatActions.updateCurrentMessage, (state, { message }) => ({
     ...state,
     currentMessage: message
   })),
 
-  // Connection status
   on(ChatActions.socketConnected, (state) => ({
     ...state,
     isConnected: true
@@ -66,7 +61,6 @@ export const chatReducer = createReducer(
     isConnected: false
   })),
 
-  // Clear chat
   on(ChatActions.clearChatSuccess, (state) => ({
     ...state,
     messages: []

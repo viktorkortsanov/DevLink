@@ -5,7 +5,6 @@ import { Project } from '../../types/project';
 
 @Component({
   selector: 'app-project-card',
-  standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './project-card.html',
   styleUrls: ['./project-card.css']

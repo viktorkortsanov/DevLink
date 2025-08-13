@@ -5,7 +5,6 @@ import { AuthService } from '../user/auth.service';
 
 @Component({
   selector: 'app-contacts',
-  standalone: true,
   imports: [FormsModule],
   templateUrl: './contact-us.html',
   styleUrls: ['./contact-us.css']

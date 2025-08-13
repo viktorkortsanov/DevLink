@@ -2,7 +2,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-confirm-dialog',
-  standalone: true,
   imports: [],
   templateUrl: './dialog.html',
   styleUrls: ['./dialog.css']

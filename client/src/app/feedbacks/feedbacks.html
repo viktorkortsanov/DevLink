@@ -1,11 +1,9 @@
 <div class="feedback-container">
-  <!-- Header -->
   <div class="feedback-header">
     <h1 class="feedback-title">User Feedback</h1>
     <p class="feedback-subtitle">See what users are saying about DevLink</p>
   </div>
 
-  <!-- Loading State -->
   @if (isLoading()) {
     <div class="loading-state">
       <div class="loading-spinner"></div>
@@ -13,7 +11,6 @@
     </div>
   }
 
-  <!-- Feedback List -->
   @if (!isLoading() && paginatedFeedback.length > 0) {
     <div class="feedback-list">
       @for (feedback of paginatedFeedback; track $index) {
@@ -44,8 +41,6 @@
         </div>
       }
     </div>
-
-    <!-- Pagination -->
     <div class="pagination-container">
       <div class="pagination">
         <button 
@@ -86,7 +81,6 @@
     </div>
   }
 
-  <!-- Empty State -->
   @if (!isLoading() && paginatedFeedback.length === 0) {
     <div class="empty-state">
       <svg class="empty-icon" fill="currentColor" viewBox="0 0 24 24">

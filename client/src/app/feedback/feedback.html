@@ -1,6 +1,5 @@
 <div class="container">
   <div class="review-form-card">
-    <!-- Header like Facebook comment -->
     <div class="form-header">
       <div class="user-avatar">
         @if (currentUser()?.profileImage) {
@@ -16,7 +15,6 @@
     </div>
 
     <form (ngSubmit)="onSubmit()">
-      <!-- Rating in horizontal layout -->
       <div class="rating-section">
         <span class="rating-label">Rating:</span>
         <div class="rating-stars">
@@ -36,7 +34,6 @@
         <span class="rating-text">{{ rating() }}/5</span>
       </div>
 
-      <!-- Comment section -->
       <div class="comment-section">
         <textarea 
           class="comment-textarea"
@@ -57,7 +54,6 @@
         </div>
       </div>
 
-      <!-- Actions -->
       <div class="form-actions">
         <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting()">
           Cancel

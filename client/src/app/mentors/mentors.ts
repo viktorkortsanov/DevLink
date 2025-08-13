@@ -18,7 +18,6 @@ interface MentorshipForm {
 
 @Component({
   selector: 'app-mentorship',
-  standalone: true,
   imports: [FormsModule],
   templateUrl: './mentors.html',
   styleUrls: ['./mentors.css'],

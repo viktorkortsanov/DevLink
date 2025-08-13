@@ -11,7 +11,6 @@ import { Project } from '../../types/project';
 
 @Component({
   selector: 'app-profile',
-  standalone: true,
   imports: [RouterLink, CapitalizePipe, ProjectCardComponent, DeveloperCardComponent],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']

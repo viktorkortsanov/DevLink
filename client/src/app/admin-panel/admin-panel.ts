@@ -37,7 +37,6 @@ export interface AnalyticsData {
 
 @Component({
   selector: 'app-admin-panel',
-  standalone: true,
   imports: [CommonModule, RouterModule, RouterLink, ConfirmDialogComponent, BaseChartDirective],
   templateUrl: './admin-panel.html',
   styleUrls: ['./admin-panel.css']
@@ -93,7 +92,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
   ) {
     Chart.register(...registerables);
 
-    // Initialize store selectors after injection
     this.chatMessages$ = this.store.select(ChatSelectors.selectChatMessages);
     this.currentMessage$ = this.store.select(ChatSelectors.selectCurrentMessage);
     this.isSending$ = this.store.select(ChatSelectors.selectIsSending);
@@ -116,7 +114,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Socket.io listeners integrated with NgRx
     const messageSubscription = this.socketService.listen('new-admin-message').subscribe((message) => {
       console.log('Received message from socket:', message); // debug log
       this.store.dispatch(ChatActions.messageReceived({ message }));
@@ -130,15 +127,12 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
       this.store.dispatch(ChatActions.socketDisconnected());
     });
 
-    // Запази subscriptions за cleanup
     this.socketSubscriptions.push(messageSubscription, connectSubscription, disconnectSubscription);
 
-    // Initialize connection status
     this.store.dispatch(ChatActions.socketConnected());
   }
 
   ngOnDestroy(): void {
-    // Cleanup subscriptions
     this.socketSubscriptions.forEach(sub => sub.unsubscribe());
   }
 
@@ -155,7 +149,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  // User Management Methods (unchanged)
   loadUsers(): void {
     this.isLoadingUsers.set(true);
     this.userService.getAll().subscribe({
@@ -274,7 +267,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Project Management Methods (unchanged)
   loadProjects(): void {
     this.isLoadingProjects.set(true);
     this.projectService.getAll().subscribe({
@@ -346,11 +338,9 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
     this.projectToDelete.set(null);
   }
 
-  // Admin Chat Methods - NgRx Integration
   loadChatHistory(): void {
     this.store.dispatch(ChatActions.loadChatHistory());
 
-    // Load chat history via service (since no effects)
     this.adminService.getAdminChatHistory().subscribe({
       next: (messages) => {
         this.store.dispatch(ChatActions.loadChatHistorySuccess({ messages }));
@@ -376,7 +366,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // Само socket emit - премахни NgRx dispatch-овете за изпращане
         this.socketService.emit('admin-message', {
           message: message.trim(),
           timestamp: new Date(),
@@ -385,7 +374,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
           adminId: user._id
         });
 
-        // Изчисти съобщението в store
         this.store.dispatch(ChatActions.updateCurrentMessage({ message: '' }));
       }
     });
@@ -394,7 +382,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
   onClearChat(): void {
     this.store.dispatch(ChatActions.clearChat());
 
-    // Clear chat via service (since no effects)
     this.adminService.clearAdminChat().subscribe({
       next: () => {
         this.store.dispatch(ChatActions.clearChatSuccess());
@@ -406,7 +393,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Analytics Methods (unchanged)
   getMockAnalyticsData(): AnalyticsData {
     return {
       userGrowth: {
@@ -438,7 +424,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
   }
 
   setupCharts(data: AnalyticsData): void {
-    // User Growth Chart (Line)
     this.userGrowthChart = {
       type: 'line',
       data: {
@@ -468,7 +453,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
       }
     };
 
-    // Tech Stack Chart (Bar)
     this.techStackChart = {
       type: 'bar',
       data: {
@@ -502,7 +486,6 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
       }
     };
 
-    // User Types Chart (Doughnut)
     this.userTypesChart = {
       type: 'doughnut',
       data: {

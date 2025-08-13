@@ -65,7 +65,6 @@
     color: #0080ff;
 }
 
-/* Партньори в hero секцията - компактни */
 .hero-partners {
     margin-top: 2rem;
     overflow: hidden;
@@ -125,7 +124,6 @@
     }
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .hero-container {
         flex-direction: column;

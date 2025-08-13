@@ -7,8 +7,7 @@ import { UserService } from '../../user/user.service';
 
 @Component({
   selector: 'app-review-form',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './review-form.html',
   styleUrls: ['./review-form.css']
 })

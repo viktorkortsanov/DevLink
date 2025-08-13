@@ -1,6 +1,3 @@
-/* ===========================================
-   RESET AND BASE STYLES
-   =========================================== */
 .admin-container {
   display: flex;
   height: 100vh;
@@ -8,9 +5,7 @@
   overflow: hidden;
 }
 
-/* ===========================================
-   SIDEBAR STYLES
-   =========================================== */
+
 .sidebar {
   width: 280px;
   background: linear-gradient(135deg, #0080ff 0%, #0066cc 100%);
@@ -38,7 +33,6 @@
   opacity: 0.8;
 }
 
-/* Navigation */
 .nav-menu {
   list-style: none;
   padding: 0 1rem;
@@ -81,9 +75,6 @@
   flex-shrink: 0;
 }
 
-/* ===========================================
-   MAIN CONTENT LAYOUT
-   =========================================== */
 .main-content {
   flex: 1;
   padding: 2rem;
@@ -95,7 +86,6 @@
   display: block;
 }
 
-/* Page Headers */
 .page-header {
   background: white;
   padding: 2rem;
@@ -130,9 +120,6 @@
   height: 0.75rem;
 }
 
-/* ===========================================
-   DASHBOARD GRID & STAT CARDS
-   =========================================== */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -153,7 +140,6 @@
   transform: translateY(-2px);
 }
 
-/* Stat Card Colors */
 .stat-card.users { border-color: #0080ff; }
 .stat-card.projects { border-color: #4a5568; }
 .stat-card.analytics { border-color: #718096; }
@@ -200,9 +186,6 @@
 .stat-change.positive { color: #0080ff; }
 .stat-change.negative { color: #718096; }
 
-/* ===========================================
-   SECTION CARDS & CONTENT
-   =========================================== */
 .section-card {
   background: white;
   border-radius: 1rem;
@@ -228,7 +211,6 @@
   padding: 2rem;
 }
 
-/* Action Buttons */
 .action-btn {
   background: #0080ff;
   color: white;
@@ -253,9 +235,6 @@
   height: 1rem;
 }
 
-/* ===========================================
-   FILTERS & SEARCH
-   =========================================== */
 .filters-container {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #e2e8f0;
@@ -321,9 +300,6 @@
   background: white;
 }
 
-/* ===========================================
-   DATA TABLES
-   =========================================== */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -348,7 +324,6 @@
   background: #f8fafc;
 }
 
-/* User Cell Styles */
 .user-info-cell,
 .project-info-cell {
   display: flex;
@@ -394,7 +369,6 @@
   white-space: nowrap;
 }
 
-/* Project Specific Styles */
 .project-logo {
   width: 2.5rem;
   height: 2.5rem;
@@ -451,7 +425,6 @@
   color: #4a5568;
 }
 
-/* Table Actions */
 .actions-cell {
   width: 120px;
 }
@@ -524,9 +497,6 @@
   height: 1rem;
 }
 
-/* ===========================================
-   BADGES & STATUS
-   =========================================== */
 .status-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
@@ -563,9 +533,6 @@
   color: #64748b;
 }
 
-/* ===========================================
-   EMPTY STATES & LOADING
-   =========================================== */
 .empty-row {
   text-align: center;
   padding: 3rem 2rem !important;
@@ -609,9 +576,6 @@
   100% { transform: rotate(360deg); }
 }
 
-/* ===========================================
-   CHAT INTERFACE
-   =========================================== */
 .chat-container-instagram {
   display: flex;
   flex-direction: column;
@@ -636,7 +600,6 @@
   gap: 1rem;
 }
 
-/* Message Wrappers */
 .message-wrapper {
   display: flex;
   width: 100%;
@@ -646,7 +609,6 @@
   justify-content: flex-end;
 }
 
-/* Message Bubbles */
 .message-bubble {
   max-width: 70%;
   padding: 0.75rem 1rem;
@@ -670,7 +632,6 @@
   border-bottom-right-radius: 0.375rem;
 }
 
-/* Message Headers */
 .message-header {
   display: flex;
   align-items: center;
@@ -719,7 +680,6 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* User Avatars */
 .user-avatar {
   width: 2rem;
   height: 2rem;
@@ -760,7 +720,6 @@
   margin: 0;
 }
 
-/* No Messages State */
 .no-messages {
   display: flex;
   flex-direction: column;
@@ -783,7 +742,6 @@
   margin-top: 0.5rem;
 }
 
-/* Chat Input Section */
 .chat-input-section {
   border-top: 1px solid #e2e8f0;
   background: white;
@@ -859,7 +817,6 @@
   color: #718096;
 }
 
-/* Chat Scrollbar */
 .messages-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -877,9 +834,6 @@
   background: #a0aec0;
 }
 
-/* ===========================================
-   ANALYTICS DASHBOARD
-   =========================================== */
 .analytics-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -906,7 +860,6 @@
   grid-row: span 2;
 }
 
-/* Analytics Card Headers */
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -923,7 +876,6 @@
   margin: 0;
 }
 
-/* Chart Containers */
 .chart-container {
   height: 300px;
   position: relative;
@@ -938,7 +890,6 @@
   height: auto !important;
 }
 
-/* Active Projects Gauge */
 .gauge-container {
   display: flex;
   flex-direction: column;
@@ -1013,9 +964,6 @@
   text-align: center;
 }
 
-/* ===========================================
-   RESPONSIVE DESIGN
-   =========================================== */
 @media (max-width: 1200px) {
   .analytics-grid {
     grid-template-columns: 1fr;

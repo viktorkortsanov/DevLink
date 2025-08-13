@@ -32,7 +32,6 @@
   align-items: start;
 }
 
-/* Contact Form */
 .contact-form-section {
   display: flex;
   flex-direction: column;
@@ -136,7 +135,6 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Messages */
 .success-message,
 .error-message {
   display: flex;
@@ -167,7 +165,6 @@
   flex-shrink: 0;
 }
 
-/* Map Section */
 .map-section {
   display: flex;
   flex-direction: column;
@@ -228,7 +225,6 @@
   line-height: 1.4;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .contacts-container {
     padding: 1rem;

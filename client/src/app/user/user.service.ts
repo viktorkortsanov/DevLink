@@ -37,7 +37,7 @@ export class UserService {
     return this.http.post(`${environment.apiUrl}/users/${targetUserId}/${userId}/reviews`, reviewData).subscribe();
   };
 
-  giveFeedback(feedbackData: FeedbackData) { //TO-DO CREATE INTERFACE
+  giveFeedback(feedbackData: FeedbackData) {
     return this.http.post(`${environment.apiUrl}/feedback`, feedbackData).subscribe();
   };
 

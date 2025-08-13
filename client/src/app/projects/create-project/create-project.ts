@@ -8,7 +8,6 @@ import { storage } from '../../../config/firebase.config';
 
 @Component({
   selector: 'app-create-project',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './create-project.html',
   styleUrls: ['./create-project.css']

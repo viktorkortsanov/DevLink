@@ -1,14 +1,12 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { AuthService } from '../user/auth.service';
 import { UserService } from '../user/user.service';
 
 @Component({
   selector: 'app-feedback',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './feedback.html',
   styleUrls: ['./feedback.css']
 })

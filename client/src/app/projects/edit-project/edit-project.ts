@@ -10,7 +10,6 @@ import { AuthService } from '../../user/auth.service';
 
 @Component({
   selector: 'app-edit-project',
-  standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './edit-project.html',
   styleUrls: ['./edit-project.css']
