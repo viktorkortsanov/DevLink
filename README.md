@@ -98,7 +98,7 @@ The main goal of DevLink is to **accelerate the career journey** of junior devel
    Install all the necessary dependencies by running the following command in your terminal:
 
    ```bash
-   npm install
+   npm install --legacy-peer-deps
    ```
 
 5. **Run the Client Part**:  
