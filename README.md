@@ -3,7 +3,9 @@
 **DevLink** is a web platform built to help **junior developers** and **aspiring programmers** showcase their skills, establish a presence in the tech world, and find internship opportunities. It combines community features, personal profile pages, and resource sharing into one centralized hub focused on developer growth and career discovery.
 
 ---
-
+## ✅ Recommended Requirements
+- Display Resolution: Full HD (1536 x 816 pixels). Our application's interface is designed to look best at a width of 1536 pixels, ensuring that all elements are displayed correctly and are easily navigable.
+---
 ## 🌟 Purpose
 
 The main goal of DevLink is to **accelerate the career journey** of junior developers by:
@@ -64,6 +66,8 @@ The main goal of DevLink is to **accelerate the career journey** of junior devel
 ### 📄 Additional Pages
 - **Home** – Introduction to the platform and its purpose
 - **Contact Us** – Users can reach out to the support team via email
+- **Give Feedback** – Users can post a feedback for out platfrom
+- **Feedbacks** - All user feedbacks
 - **Privacy Policy** – Explains how user data is collected and handled
 - **Terms of Service** – Outlines the platform's usage rules and legal terms
 
