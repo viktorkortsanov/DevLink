@@ -68,6 +68,8 @@
         color: #4a5568;
         margin-bottom: 1.5rem;
         text-align: left;
+        white-space: normal;
+        overflow-wrap: break-word;
     }
 
     .edit-profile-btn {
