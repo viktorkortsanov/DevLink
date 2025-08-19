@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, computed } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../user.service';
@@ -20,6 +20,7 @@ export class EditProfileComponent implements OnInit {
   imagePreviewUrl = signal<string>('');
   selectedFile: File | null = null;
   userInfo: User | null = null;
+  currentUser = computed(() => this.authService.currentUser());
 
   constructor(
     private fb: FormBuilder,
@@ -168,6 +169,7 @@ export class EditProfileComponent implements OnInit {
       this.userService.updateUserInfo(userId, profileData).subscribe({
         next: (updatedUser) => {
           this.isLoading.set(false);
+
           localStorage.setItem('user', JSON.stringify({
             _id: updatedUser._id,
             username: updatedUser.username,
@@ -176,6 +178,7 @@ export class EditProfileComponent implements OnInit {
             role: updatedUser.role,
             isAdmin: updatedUser.isAdmin
           }));
+
           this.router.navigate([`/profile/${userId}`]);
         },
         error: (err) => {

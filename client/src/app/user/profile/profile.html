@@ -36,7 +36,10 @@
             </div>
             }
 
+            @if(currentUser()?._id === user?._id) {
             <a [routerLink]="['/edit-profile', user?._id]" class="edit-profile-btn">Edit Profile</a>
+            }
+
         </div>
 
         <div class="profile-card">
