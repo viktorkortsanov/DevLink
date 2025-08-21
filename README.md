@@ -48,6 +48,7 @@ The main goal of DevLink is to **accelerate the career journey** of junior devel
 - Filter projects by type, experience level, and work type
 
 ### 🧷 Developers Page (employers only)
+**-The page shows only developers whose bio contains at least 100 characters.**
 - Employers can:
   - Search developers by name, skills, or location
   - View developer profiles
